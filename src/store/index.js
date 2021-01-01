@@ -1,8 +1,21 @@
-import { createStore } from "vuex";
+import { createStore } from 'vuex'
+
+const state = {
+  roles: []
+}
+
+const mutations = {
+  roles(state, payload) {
+    state.roles = payload
+  },
+  logout(state) {
+    state.roles = []
+  }
+}
 
 export default createStore({
-  state: {},
-  mutations: {},
+  state: state,
+  mutations: mutations,
   actions: {},
   modules: {}
-});
+})
