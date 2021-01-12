@@ -8,10 +8,15 @@ import {
   ElMenu,
   ElSubmenu,
   ElMenuItemGroup,
-  ElMenuItem
+  ElMenuItem,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElMessage
 } from 'element-plus'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
 import locale from 'element-plus/lib/locale'
+// import {Form, FormItem, Input} from 'element-ui'
 
 export default app => {
   locale.use(lang)
@@ -25,4 +30,8 @@ export default app => {
   app.use(ElSubmenu)
   app.use(ElMenuItemGroup)
   app.use(ElMenuItem)
+  app.use(ElForm)
+  app.use(ElFormItem)
+  app.use(ElInput)
+  app.use(ElMessage)
 }

@@ -1,9 +1,16 @@
 import { createApp } from 'vue'
+// import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 // eslint-disable-next-line no-unused-vars
 import installElementPlus from './plugins/element.js'
+
+import './assets/css/global.css'
+
+// import axios from 'axios'
+// axios.defaults.baseURL = ''
+// Vue.prototype.$http = axios
 
 router.beforeEach((to, from, next) => {
   if (!to.meta.roles || process.env.NODE_ENV === 'dev') {
