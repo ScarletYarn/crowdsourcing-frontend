@@ -31,7 +31,18 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main><router-view></router-view></el-main>
+      <el-main>
+        <div class="user_info">
+          <div class="user_img">
+            <img src="../assets/contributor.png" alt="">
+          </div>
+          <div class="user_name_time">
+            <p class="user_name">姓名: <span>sxw</span></p>
+            <p class="user_time">注册时间: <span>2020-12-10</span></p>
+          </div>
+        </div>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -100,5 +111,29 @@ export default {
   text-align: center;
   letter-spacing: 0.2em;
   cursor: pointer;
+}
+.user_info{
+  /*width: 1250px;*/
+  height: 150px;
+  margin: 35px 80px 0 80px;
+  border-bottom: 2px solid gray;
+  padding-bottom: 35px;
+}
+.user_img{
+  float: left;
+}
+.user_name_time{
+  float: left;
+  padding-left: 40px;
+  padding-top: 15px;
+  text-align: left;
+
+}
+.user_name{
+  font-size: 22px;
+  font-weight: bold;
+}
+.user_time{
+  font-style: oblique;
 }
 </style>

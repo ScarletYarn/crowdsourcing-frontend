@@ -1,5 +1,5 @@
 <template>
-  <div>MyReward</div>
+  <div class="reward_container">MyReward</div>
 </template>
 
 <script>
@@ -9,5 +9,7 @@ name: "MyReward"
 </script>
 
 <style scoped>
-
+.reward_container{
+  padding-top: 20px;
+}
 </style>

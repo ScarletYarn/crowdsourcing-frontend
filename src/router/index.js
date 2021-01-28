@@ -5,9 +5,9 @@ export const ROLE_ADMIN = 'ROLE_ADMIN'
 
 const routes = [
   {
-    path: '/any',
-    name: 'any',
-    component: () => import('../views/Any.vue')
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../views/Signup.vue')
   },
   {
     path: '/user',
@@ -33,6 +33,10 @@ const routes = [
     meta: {
       roles: [ROLE_ADMIN]
     }
+  },
+  {
+    path:'/infoedit',
+    component:() => import('../components/InfoEdit.vue')
   },
   {
     path: '/login',

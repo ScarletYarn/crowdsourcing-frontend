@@ -1,5 +1,5 @@
 <template>
-  <div>WorkHistory</div>
+  <div class="history_container">WorkHistory</div>
 </template>
 
 <script>
@@ -9,5 +9,7 @@ name: "WorkHistory"
 </script>
 
 <style scoped>
-
+.history_container{
+  padding-top: 20px;
+}
 </style>

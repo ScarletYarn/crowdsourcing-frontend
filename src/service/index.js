@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-export const BASE_URL = 'http://localhost:8080'
+// export const BASE_URL = 'http://localhost:8080'
+export const BASE_URL = 'http://192.168.10.162:8080'
 
 // Set csrf token to any value in case it doesn't present
 if (process.env.NODE_ENV === 'dev') document.cookie = 'XSRF-TOKEN=dump'
@@ -19,6 +20,18 @@ export const login = (username, password) => {
   f.append('username', username)
   f.append('password', password)
   return service.post(`login`, f)
+}
+
+// export const signup = (data) => {
+//   return service.post(`/user/signup`, data)
+// }
+export const signup = (username, password, phone, alipay) => {
+  const f = new FormData()
+  f.append('username', username)
+  f.append('password', password)
+  f.append('phone', phone)
+  f.append('alipay', alipay)
+  return service.post(`/user/signup`, f)
 }
 
 export const any = () => {

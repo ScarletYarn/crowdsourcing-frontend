@@ -9,7 +9,7 @@
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
         <!--用户名-->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="请输入用户名" prefix-icon="el-icon-user-solid"></el-input>
+          <el-input v-model="loginForm.username" placeholder="请输入手机号" prefix-icon="el-icon-user-solid"></el-input>
         </el-form-item>
         <!--密码-->
         <el-form-item prop="password">
@@ -17,8 +17,8 @@
         </el-form-item>
         <!--按钮-->
         <el-form-item class="btns">
+          <el-button type="info" @click="signup">注册</el-button>
           <el-button type="primary" @click="login">登录</el-button>
-          <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -39,8 +39,8 @@ export default {
       },
       loginFormRules:{
         username:[
-          { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { min: 11, max: 11, message: '长度应为11个字符', trigger: 'blur' }
         ],
         password:[
           { required: true, message: '密码不能为空', trigger: 'blur' },
@@ -51,18 +51,22 @@ export default {
   },
   methods: {
     async login() {
-      await login(this.username, this.password)
-      const res = await roles()
-      this.$store.commit('roles', res.data)
-      if (res.data.indexOf(ROLE_ADMIN) !== -1) await this.$router.push('admin')
-      else await this.$router.push('user')
+      this.$refs.loginFormRef.validate(async valid=>{
+        console.log(valid)
+        if (!valid) return
+        await login(this.username, this.password)
+        const res = await roles()
+        this.$store.commit('roles', res.data)
+        if (res.data.indexOf(ROLE_ADMIN) !== -1) await this.$router.push('admin')
+        else await this.$router.push('user')
+      })
     },
-    resetLoginForm(){
-      this.$refs.loginFormRef.resetFields()
+    signup(){
+      this.$router.push("/signup")
     },
     loginLoginForm(){
       this.$refs.loginFormRef.validate(async valid => {
-        // console.log(valid)
+        console.log(valid)
         if (!valid) return;
         const result = await this.$http.post("login",this.loginForm)
         if (result != 200) return this.$message.error('登录失败')

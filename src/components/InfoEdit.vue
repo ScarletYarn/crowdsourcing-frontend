@@ -1,5 +1,5 @@
 <template>
-  <div>InfoEdit</div>
+  <div class="infoedit_container">InfoEdit</div>
 </template>
 
 <script>
@@ -9,5 +9,7 @@ export default {
 </script>
 
 <style scoped>
-
+.infoedit_container{
+  padding-top: 20px;
+}
 </style>
