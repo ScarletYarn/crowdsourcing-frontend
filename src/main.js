@@ -27,7 +27,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-if (process.env.NODE_ENV === 'dev') require('./mock')
+// if (process.env.NODE_ENV === 'dev') require('./mock')
 
 const app = createApp(App)
 

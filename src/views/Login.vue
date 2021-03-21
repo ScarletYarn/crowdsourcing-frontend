@@ -26,11 +26,20 @@
 </template>
 
 <script>
-import { login, roles } from '../service'
-import { ROLE_ADMIN } from '../router'
+import { login } from '../service'
+// import { ROLE_ADMIN } from '../router'
+import {ElMessageBox} from "element-plus";
 
 export default {
   name: 'Login',
+  mounted() {
+    if (process.env.NODE_ENV === 'dev') {
+      this.loginForm = {
+        username: '12341234100',
+        password: '123123'
+      }
+    }
+  },
   data() {
     return {
       loginForm:{
@@ -54,11 +63,20 @@ export default {
       this.$refs.loginFormRef.validate(async valid=>{
         console.log(valid)
         if (!valid) return
-        await login(this.username, this.password)
-        const res = await roles()
-        this.$store.commit('roles', res.data)
-        if (res.data.indexOf(ROLE_ADMIN) !== -1) await this.$router.push('admin')
-        else await this.$router.push('user')
+        const res = await login(this.loginForm.username, this.loginForm.password)
+        console.log(res)
+        if (res.status != 200) return this.$message.error('登录失败')
+        // this.$message.error('登录成功')
+        await ElMessageBox({
+          type: 'succeeded',
+          message: '登录成功'
+        })
+        await this.$router.push('availablejobs')
+        // this.$router.push("user")
+        // const res = await roles()
+        // this.$store.commit('roles', res.data)
+        // if (res.data.indexOf(ROLE_ADMIN) !== -1) await this.$router.push('admin')
+        // else await this.$router.push('user')
       })
     },
     signup(){

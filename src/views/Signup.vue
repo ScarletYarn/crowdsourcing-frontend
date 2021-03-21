@@ -75,8 +75,9 @@ export default {
         console.log(valid)
         if (!valid) return
         console.log(this.signUpForm)
-        const res = await signup(this.username, this.password, this.mobile, this.mobile)
+        const res = await signup(this.signUpForm.username, this.signUpForm.password, this.signUpForm.mobile, this.signUpForm.mobile)
         console.log(res)
+        if (!res.data.data) return this.$message.error(res.data.msg)
         await ElMessageBox({
           type: 'succeeded',
           message: '注册成功'
