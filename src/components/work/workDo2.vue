@@ -20,10 +20,12 @@
           <span class="demonstration">规则解释 {{}}</span>
           <el-carousel
             trigger="click"
+            :initial-index="0"
             height="350px"
             :autoplay="false"
             arrow="always"
             class="carousel"
+            ref="car"
           >
             <el-carousel-item>
               <div class="explain">
@@ -138,6 +140,7 @@ export default {
   methods: {
     reset() {
       this.answer = ''
+      this.$refs['car'].setActiveItem(0)
     },
     async getCurrentRule() {
       const ruleData = await qRule(this.ruleIdList[this.ruleIndex])
@@ -178,7 +181,7 @@ export default {
         console.log(res.data.msg)
         return
       }
-      if (this.ruleIndex === this.ruleIdList.length) {
+      if (this.ruleIndex === this.ruleIdList.length-1) {
         await this.$router.push({
           name: 'check',
           params: { jobId: this.$route.params.jobId }
