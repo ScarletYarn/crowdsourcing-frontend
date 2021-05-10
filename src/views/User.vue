@@ -20,12 +20,12 @@
           <el-menu-item index="/myreward"><template #title><i class="el-icon-coin"></i>
             <span>我的酬劳</span></template>
           </el-menu-item>
-          <el-menu-item index="/rewardrank"><template #title><i class="el-icon-trophy-1"></i>
-            <span>酬劳排行榜</span></template>
-          </el-menu-item>
-          <el-menu-item index="/workhistory"><template #title><i class="el-icon-s-data"></i>
-            <span>工作历史</span></template>
-          </el-menu-item>
+<!--          <el-menu-item index="/rewardrank"><template #title><i class="el-icon-trophy-1"></i>-->
+<!--            <span>酬劳排行榜</span></template>-->
+<!--          </el-menu-item>-->
+<!--          <el-menu-item index="/workhistory"><template #title><i class="el-icon-s-data"></i>-->
+<!--            <span>工作历史</span></template>-->
+<!--          </el-menu-item>-->
           <el-menu-item index="infoedit"><template #title><i class="el-icon-edit-outline"></i>
             <span>资料编辑</span></template>
           </el-menu-item>
@@ -37,8 +37,8 @@
             <img src="../assets/contributor.png" alt="">
           </div>
           <div class="user_name_time">
-            <p class="user_name">姓名: <span>sxw</span></p>
-            <p class="user_time">注册时间: <span>2020-12-10</span></p>
+            <p class="user_name">姓名: <span>{{userMe.username}}</span></p>
+            <p class="user_time">注册时间: <span>{{userMe.signupDate}}</span></p>
           </div>
         </div>
         <router-view></router-view>
@@ -48,17 +48,32 @@
 </template>
 
 <script>
-import { logout } from '../service'
+import {getme, logout} from '../service'
 
 export default {
   name: 'User',
   data(){
     return{
       menuList: [],
-      isMenuCollapse: false
+      isMenuCollapse: false,
+      userMe:{
+        username:'',
+        mobile:"",
+        signupDate:""
+      }
     }
   },
+  created(){
+    this.getUserMe()
+  },
   methods: {
+    async getUserMe() {
+      const res = await getme()
+      console.log(res)
+      this.userMe.username = res.data.data.username
+      this.userMe.mobile = res.data.data.phone
+      this.userMe.signupDate = res.data.data.signupDate.slice(0,10)
+    },
     async logout() {
       await logout()
       this.$store.commit('logout')
@@ -122,18 +137,17 @@ export default {
 .user_img{
   float: left;
 }
-.user_name_time{
+.user_name_time {
   float: left;
   padding-left: 40px;
   padding-top: 15px;
   text-align: left;
-
 }
-.user_name{
+.user_name {
   font-size: 22px;
   font-weight: bold;
 }
-.user_time{
+.user_time {
   font-style: oblique;
 }
 </style>

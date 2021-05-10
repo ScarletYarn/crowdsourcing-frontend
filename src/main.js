@@ -8,25 +8,6 @@ import installElementPlus from './plugins/element.js'
 
 import './assets/css/global.css'
 
-// import axios from 'axios'
-// axios.defaults.baseURL = ''
-// Vue.prototype.$http = axios
-
-router.beforeEach((to, from, next) => {
-  if (!to.meta.roles || process.env.NODE_ENV === 'dev') {
-    next()
-  } else {
-    for (let role of to.meta.roles) {
-      if (store.state.roles.indexOf(role) === -1) {
-        alert('Please login first! ')
-        next({ name: 'login' })
-        break
-      }
-    }
-    next()
-  }
-})
-
 // if (process.env.NODE_ENV === 'dev') require('./mock')
 
 const app = createApp(App)

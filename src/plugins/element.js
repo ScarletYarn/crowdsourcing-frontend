@@ -40,6 +40,11 @@ import {
   ElCarouselItem,
   ElPagination,
   ElTooltip,
+  ElDialog,
+  ElProgress,
+  ElTag,
+  ElPopover,
+  ElCascader
 } from 'element-plus'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
 import locale from 'element-plus/lib/locale'
@@ -47,6 +52,8 @@ import locale from 'element-plus/lib/locale'
 
 export default app => {
   locale.use(lang)
+  app.use(ElPopover)
+  app.use(ElDialog)
   app.use(ElTooltip)
   app.use(ElPagination)
   app.use(ElCarouselItem)
@@ -88,4 +95,7 @@ export default app => {
   app.use(ElSelect)
   app.use(ElOption)
   app.use(ElOptionGroup)
+  app.use(ElProgress)
+  app.use(ElTag)
+  app.use(ElCascader)
 }

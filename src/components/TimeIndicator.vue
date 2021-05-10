@@ -9,7 +9,7 @@ export default {
   name: 'TimeIndicator',
   data() {
     return {
-      remainingTime: 25 * 60,
+      remainingTime: 0,
       running: false,
       id: 0
     }
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     initiate() {
-      this.remainingTime = 25 * 60
+      this.remainingTime = 0
       this.running = true
       this.id = setTimeout(this.handler, 1000)
     },
@@ -43,7 +43,7 @@ export default {
       this.id = setTimeout(this.handler, 1000)
     },
     handler() {
-      this.remainingTime--
+      this.remainingTime++
       if (this.remainingTime === 0) {
         this.$emit('end')
         this.running = false

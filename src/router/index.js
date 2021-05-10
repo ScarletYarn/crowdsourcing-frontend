@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Login from '../views/Login.vue'
 
 export const ROLE_USER = 'ROLE_USER'
 export const ROLE_ADMIN = 'ROLE_ADMIN'
@@ -43,7 +44,6 @@ const routes = [
     meta: {
       roles: [ROLE_USER]
     },
-    redirect: '/welcome',
     children: [
       {
         path: '/welcome',
@@ -82,7 +82,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/Login.vue')
+    component: Login
   },
   {
     path: '/signup',
@@ -94,6 +94,8 @@ const routes = [
     redirect: '/login'
   }
 ]
+
+console.log(process.env.BASE_URL)
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

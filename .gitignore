@@ -3,6 +3,8 @@ node_modules
 /dist
 *rar
 *zip
+public/img
+public/video
 
 
 # local env files

@@ -24,6 +24,8 @@
           <el-input v-model="signUpForm.ppassword" type="password" placeholder="请确认密码" prefix-icon="el-icon-lock"></el-input>
         </el-form-item>
         <!--按钮-->
+        <div style="width: 80px;float: left; padding-top: 12px; font-size: 0.9em"><a href="login" style="display: block; text-align: left">返回登录</a>
+        </div>
         <el-form-item class="btns">
           <el-button type="info" @click="resetSignupForm">重置</el-button>
           <el-button type="primary" @click="signup">注册</el-button>
@@ -41,10 +43,10 @@ export default {
   data(){
     return{
       signUpForm:{
-        username: 'sxw',
-        mobile: '12341234123',
-        password: '123123',
-        ppassword: '123123',
+        username: '',
+        mobile: '',
+        password: '',
+        ppassword: '',
       },
       signUpFormRules:{
         username:[
@@ -82,7 +84,7 @@ export default {
           type: 'succeeded',
           message: '注册成功'
         })
-        this.$router.push("user")
+        this.$router.push("login")
       })
     },
     async user() {

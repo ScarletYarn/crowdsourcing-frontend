@@ -20,29 +20,29 @@ Mock.mock(`${BASE_URL}/logout`, () => universalSuccess)
 Mock.mock(`${BASE_URL}/job/all`, () =>
   succeed([
     {
-      id: '10086',
+      seq: '10086',
       name: '规则正误判定',
       publishDate: '2020-12-12 14:00:00',
       desc: '将规则的正误判断出来',
-      reward: 2.58
+      reward: 1000
     },
     {
-      id: '10010',
+      seq: '10010',
       name: '新规则正误判定',
       publishDate: '2020-12-21 14:00:00',
       desc: '将规则的正误判断出来',
-      reward: 3.56
+      reward: 1000
     }
   ])
 )
 
 Mock.mock(RegExp(`${BASE_URL}/job/q?` + '.*'), () =>
   succeed({
-    id: '10010',
+    seq: '10010',
     name: '新规则正误判定',
     publishDate: '2020-12-21 14:00:00',
     desc: '将规则的正误判断出来',
-    reward: 3.56
+    reward: 1000
   })
 )
 
@@ -50,17 +50,17 @@ Mock.mock(`${BASE_URL}/reward/me`, () =>
   succeed([
     {
       id: '1233',
-      jobId: '10086',
+      seq: '10086',
       completeTime: '2021-2-22 15:00:00',
-      value: 3.56,
+      value: 1000,
       status: '未支付',
       userId: '123'
     },
     {
       id: '3322',
-      jobId: '10010',
+      seq: '10010',
       completeTime: '2021-2-22 15:00:00',
-      value: 3.56,
+      value: 1000,
       status: '未支付',
       userId: '123'
     }

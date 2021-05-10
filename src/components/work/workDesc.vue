@@ -4,7 +4,15 @@
       <div class="title">
         <span>任务描述</span>
       </div>
-      <div class="infos"></div>
+      <div class="infos">
+        <video
+          style="width: 100%; height: 100%"
+          src="/video/知识众包讲解.mov"
+          controls="controls"
+        >
+          您的浏览器不支持视频播放。
+        </video>
+      </div>
       <div class="action">
         <el-button type="primary" @click="nextStage">开始任务</el-button>
       </div>
@@ -13,14 +21,25 @@
 </template>
 
 <script>
+import { getQuestionnaire } from '@/service'
+
 export default {
   name: 'workDesc',
   methods: {
-    nextStage() {
-      this.$router.push({
-        name: 'questionnaire',
-        params: { jobId: this.$route.params.jobId }
-      })
+    async nextStage() {
+      const jobId = this.$route.params.jobId
+      const res = await getQuestionnaire(jobId)
+      if (res.data.data !== null) {
+        await this.$router.push({
+          name: 'workdo',
+          params: { jobId }
+        })
+      } else {
+        await this.$router.push({
+          name: 'questionnaire',
+          params: { jobId }
+        })
+      }
     }
   }
 }
@@ -45,9 +64,6 @@ export default {
   font-weight: 700;
 }
 .infos {
-  margin: auto;
-  width: 1100px;
-  height: 400px;
   margin-top: 30px;
   text-align: left;
   overflow: hidden;

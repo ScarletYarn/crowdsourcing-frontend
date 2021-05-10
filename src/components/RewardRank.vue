@@ -1,7 +1,9 @@
 <template>
   <div class="rewardbank_container">
     <div class="rewardRule">
-      酬劳计算规则：
+      <span>酬劳计算规则：</span>
+      <div style="padding-top: 1em">薪酬由两部分组成，一部分是您的任务正确率乘以金额总数。另一部分，如果您的准确率高于其他所有用户的平均准确率，将会按 您的准确率与其他所有用户的平均准确率之差除以100%正确率（任务全部正确完成时）与其他所有用户的平均准确率之差 的比例 乘以最大奖励额度，计算奖励金额；否则奖励0元。</div>
+
     </div>
     <div class="rewardBank">
       <el-table :data="tableData" stripe style="width: 100%">
@@ -14,6 +16,8 @@
     </div>
   </div>
 </template>
+
+
 
 <script>
 import { getRank } from '@/service'
@@ -41,13 +45,26 @@ export default {
 }
 </script>
 
-<style scoped lang="sass">
-.rewardbank_container
-  box-sizing: border-box
-  width: 100%
-  padding: 2em 10%
-  display: flex
-  flex-direction: row
-  justify-content: space-between
-  align-items: center
+<style scoped>
+.rewardbank_container{
+  box-sizing: border-box;
+  width: 100%;
+  padding: 2em 10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /*align-items: center;*/
+}
+.rewardRule{
+  width: 42%;
+  /*padding-right: 90px;*/
+  text-align: left;
+  /*letter-spacing: 3px;*/
+  /*line-height: 20px;*/
+}
+.rewardBank{
+  width: 45%;
+
+}
+
 </style>

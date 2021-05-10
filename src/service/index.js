@@ -1,11 +1,15 @@
 import axios from 'axios'
 
-export const BASE_URL = 'http://localhost:8080'
+export const BASE_URL =
+  process.env.NODE_ENV === 'dev'
+    ? 'http://localhost:8080'
+    : `http://${window.location.host}`
 // export const BASE_URL = 'http://192.168.10.162:8080'
 
 // Set csrf token to any value in case it doesn't present
 if (process.env.NODE_ENV === 'dev') document.cookie = 'XSRF-TOKEN=dump'
-const CSRF_TOKEN = document.cookie.match(new RegExp(`XSRF-TOKEN=([^;]+)`))[1]
+// const CSRF_TOKEN = document.cookie.match(new RegExp(`XSRF-TOKEN=([^;]+)`))[1]
+const CSRF_TOKEN = 'XSRF-TOKEN=dump'
 
 const service = axios.create({
   baseURL: BASE_URL,
@@ -93,8 +97,11 @@ export const insertQuestionnaire = (
   age,
   gender,
   kg,
+  logic,
   education,
-  rating
+  rating,
+  cognitionStyle,
+  field
 ) => {
   return service.put(`/user/questionnaire/p`, null, {
     params: {
@@ -102,8 +109,11 @@ export const insertQuestionnaire = (
       age: age,
       gender: gender,
       kg: kg,
+      logic: logic,
       education: education,
-      rating: rating
+      rating: rating,
+      cognitionStyle: cognitionStyle,
+      field: field
     }
   })
 }
@@ -128,6 +138,7 @@ export const answer = (
   jobId,
   ruleDataId,
   answer,
+  noExpScore,
   graphScore,
   nlScore,
   instanceScore
@@ -137,9 +148,84 @@ export const answer = (
       jobId: jobId,
       ruleDataId: ruleDataId,
       answer: answer,
+      noExpScore: noExpScore,
       graphScore: graphScore,
       nlScore: nlScore,
       instanceScore: instanceScore
+    }
+  })
+}
+
+export const getCheck = jobId => {
+  return service.get(`/answerRecord/result`, {
+    params: {
+      jobId: jobId
+    }
+  })
+}
+
+export const appeal = (ruleDataId, content) => {
+  return service.put(`/appeal/add`, null, {
+    params: {
+      ruleDataId: ruleDataId,
+      content: content ? content : null
+    }
+  })
+}
+
+export const userAct = (jobId, ruleDataId, clickedId, aux) => {
+  return service.put(`/userAction/add`, null, {
+    params: {
+      jobId: jobId,
+      ruleDataId: ruleDataId,
+      clickedId: clickedId,
+      aux: aux ? aux : null
+    }
+  })
+}
+
+export const ratingSheet = (jobId, prevRuleId, best, worst, bcomment, wcomment) => {
+  return service.put(`/ratingSheet/add`, null, {
+    params: {
+      jobId: jobId,
+      prevRuleId: prevRuleId,
+      best: best,
+      worst: worst,
+      bcomment: bcomment ? bcomment : null,
+      wcomment: wcomment ? wcomment : null
+    }
+  })
+}
+
+export const jobComplete = (jobId)=> {
+  return service.put(`/job/complete`, null, {
+    params:{
+      jobId: jobId,
+    }
+  })
+}
+
+export const getJobComplete = jobId => {
+  return service.get(`/job/isComplete`, {
+    params: {
+      jobId: jobId
+    }
+  })
+}
+
+export const getJobStatus = jobId => {
+  return service.get(`/job/currentIndex`, {
+    params: {
+      jobId: jobId
+    }
+  })
+}
+
+export const ratingSheetComplete = (jobId, prevIndex) => {
+  return service.get(`/ratingSheet/isComplete`, {
+    params: {
+      jobId,
+      prevIndex
     }
   })
 }
