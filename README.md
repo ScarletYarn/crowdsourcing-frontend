@@ -140,3 +140,7 @@ The first component loaded should not use lazy loading.
 ```js
 import Login from '../views/Login.vue'
 ```
+
+- `chart.js` Error: "bar" is not a registered controller.
+
+First register the components. Refer [here](https://www.chartjs.org/docs/latest/getting-started/v3-migration.html).

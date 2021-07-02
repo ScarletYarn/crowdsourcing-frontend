@@ -51,7 +51,7 @@
             <span class="dialog-footer">
               <el-button
                 type="primary"
-                @click="appealSubmit"
+                @click="appealSubmit()"
                 class="dialog-button"
               >
                 提 交
@@ -89,12 +89,15 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      checkData: [],
+      checkData: [
+          // {ruleDataId:1, answer: true, goldenAnswer: true,},{ruleDataId:2, answer: true, goldenAnswer: true,}
+          ],
       rules: {},
       appealContent: '',
       isShow: false,
       answer: '',
-      accRate: 0
+      accRate: 0,
+      checkedId:[],
     }
   },
   watch: {
@@ -104,7 +107,10 @@ export default {
   },
   methods: {
     changeIsShow() {
-      this.isShow = !this.isShow
+      console.log(this.rules.id)
+      if(this.checkedId.indexOf(this.rules.id) < 0){
+        this.isShow = !this.isShow
+      }
     },
     async getCurrentRule() {
       const ruleData = await qRule(this.ruleIdList[this.ruleIndex])
@@ -120,6 +126,8 @@ export default {
       this.answer = answer
     },
     async appealSubmit() {
+      this.checkedId.push(this.rules.id)
+      console.log(this.checkedId)
       await appeal(this.rules.id, this.appealContent)
       this.dialogVisible = false
       this.appealContent = ''

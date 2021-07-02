@@ -277,19 +277,23 @@ export default {
         return 0.5 - Math.random()
       })
       this.numList = [0, ...arr]
+      console.log(this.numList)
     },
-    reset() {
-      this.answer = ''
-      this.$refs['car'].setActiveItem(0)
-      if (process.env.NODE_ENV === 'dev') {
-        this.scores.noexp = 4
-        this.scores.ins = 4
-        this.scores.nl = 4
-        this.scores.kg = 5
-      }
-    },
+    // reset() {
+    //   this.answer = ''
+    //   this.$refs['car'].setActiveItem(0)
+    //   if (process.env.NODE_ENV === 'dev') {
+    //     this.scores.noexp = 4
+    //     this.scores.ins = 4
+    //     this.scores.nl = 4
+    //     this.scores.kg = 5
+    //   }
+    // },
     resetAll() {
       this.shuffle()
+      if (this.carouselValue !== 0) this.cancelNext = true
+      this.carouselValue = 0
+      this.virtualIndex = 0
       this.answer = ''
       this.scores.noexp = 0
       this.scores.ins = 0
@@ -397,10 +401,12 @@ export default {
     },
     async handleSwitch(e) {
       // if (e === this.carouselValue) return
+      console.log(`e is ${e} and cancel is ${this.cancelNext}`)
       if (this.cancelNext) {
         this.cancelNext = false
         return
       }
+      console.log(`values: {cv: ${this.carouselValue}, vi: ${this.virtualIndex}}`)
       if ((this.carouselValue + 1) % 4 === e) {
         this.virtualIndex = this.virtualIndex === 3 ? 0 : this.virtualIndex + 1
       } else {
@@ -409,6 +415,7 @@ export default {
       const types = ['noexp', 'ins', 'nl', 'kg']
       this.$refs.car.setActiveItem(this.numList[this.virtualIndex])
       this.carouselValue = this.numList[this.virtualIndex]
+      console.log(`values: {cv: ${this.carouselValue}, vi: ${this.virtualIndex}}`)
       if (this.numList[this.virtualIndex] !== e) this.cancelNext = true
       await this.sendLog(`carousel-switch-${types[this.carouselValue]}`)
     },

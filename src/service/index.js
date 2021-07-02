@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const BASE_URL =
   process.env.NODE_ENV === 'dev'
-    ? 'http://localhost:8080'
+    ? 'http://localhost:8081'
     : `http://${window.location.host}`
 // export const BASE_URL = 'http://192.168.10.162:8080'
 

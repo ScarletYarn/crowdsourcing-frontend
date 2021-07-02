@@ -61,6 +61,9 @@
               <el-cascader
                 v-model="form.field"
                 :options="options"
+                :props="{
+                  multiple: true
+                }"
               ></el-cascader>
             </el-form-item>
             <el-form-item>
@@ -530,6 +533,7 @@ export default {
       }
       this.$refs['form'].validate(async valid => {
         if (valid) {
+          const fields = this.form.field.map(e => e[e.length - 1])
           const res = await insertQuestionnaire(
             this.form.name,
             this.form.age,
@@ -539,7 +543,7 @@ export default {
             this.form.education,
             this.personalityForm.rating.toString(),
             this.vvqForm.yon.toString(),
-            this.form.field[this.form.field.length - 1]
+            fields.toString()
           )
           if (res.data.data) {
             await this.$router.push({

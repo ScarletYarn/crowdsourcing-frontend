@@ -16,11 +16,11 @@
             <template #reference>
               <span style="color: blue"> (查看规则)</span>
             </template>
-            <p>薪酬由基础工资和资历两部分组成，一部分是您的任务正确率乘以金额总数。另一部分，如果您的准确率<img src="../assets/formula1.png" alt="" width="20">高于其他所有用户的平均准确率<img src="../assets/formula2.png" alt="" width="30">，您将会得到最大奖励金额乘以<img src="../assets/formula3.png" alt="" width="75">，否则奖励0元。</p>
+            <p>薪酬由基础工资和奖励两部分组成，一部分是您的任务正确率乘以金额总数。另一部分，如果您的准确率<img src="../assets/formula1.png" alt="" width="20">高于其他所有用户的平均准确率<img src="../assets/formula2.png" alt="" width="30">，您将会得到最大奖励金额乘以<img src="../assets/formula3.png" alt="" width="75">，否则奖励0元。</p>
           </el-popover>
         </template>
         <template #default="scope">
-          <span>基础工资：{{ scope.row.reward }} ，资历金额：待算</span>
+          <span>基础工资：{{ scope.row.reward }} ，奖励金额：待算</span>
         </template>
       </el-table-column>
       <el-table-column prop="publishDate" label="发布日期" width="230">
@@ -62,7 +62,6 @@ export default {
   methods: {
     columnStyle({ rowIndex }) {
       if (!this.completeSeq.indexOf(rowIndex + 1)) {
-        console.log('haha')
         this.isActionShow = false
         return 'background:#bbb;'
       } else {

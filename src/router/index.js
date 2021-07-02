@@ -90,6 +90,27 @@ const routes = [
     component: () => import('../views/Signup.vue')
   },
   {
+    path: '/result/:id',
+    name: 'result',
+    component: () => import('../components/Result.vue'),
+    props: true
+  },
+  {
+    path: '/kb/home',
+    name: 'kb',
+    component: () => import('../components/KBPages/Home.vue')
+  },
+  {
+    path: '/kb/entity',
+    name: 'entity',
+    component: () => import('../components/KBPages/Entity.vue')
+  },
+  {
+    path: '/kb/relationship',
+    name: 'relationship',
+    component: () => import('../components/KBPages/Relationship.vue')
+  },
+  {
     path: '/',
     redirect: '/login'
   }
