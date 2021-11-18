@@ -2,6 +2,7 @@
   <div class="workpanel">
     <div class="content">
       <i-time-indicator ref="indicator"></i-time-indicator>
+      <div>基础金币：{{ coins }}</div>
       <div class="workdo" v-show="isScoreShow">
         <div class="infos">
           <div class="progress">
@@ -19,32 +20,30 @@
             ></el-progress>
           </div>
           <div class="block">
-            <p class="rule">规则：{{ rules.content }}</p>
-            <span class="demonstration">规则解释 {{}}</span>
+            <div
+              class="next-page"
+              v-if="activePageIndex < 2"
+              @click="handlePageNext"
+            >
+              <i class="el-icon-right" />
+            </div>
+            <p class="rule">
+              <el-tooltip effect="dark" placement="top" v-model="showTip">
+                <template #content>
+                  如果您觉得每题首次出现的辅助界面对于您理解规则帮助不大，可以点击下方右箭头切换辅助界面。注意：一经切换，将无法回到之前的界面。
+                </template>
+                <i class="el-icon-warning" />
+              </el-tooltip>
+              规则：{{ rules.content }}
+            </p>
             <el-carousel
-              trigger="click"
-              :initial-index="0"
+              indicator-position="none"
               height="350px"
               :autoplay="false"
-              arrow="always"
+              arrow="never"
               class="carousel"
               ref="car"
-              @change="handleSwitch"
-              v-model="carouselValue"
-              indicator-position="none"
             >
-              <el-carousel-item v-bind:class="{ grayActive: isGrayActive }">
-                <div class="explain">
-                  <p>
-                    请您对这种<span style="color:red;">谓词逻辑</span>
-                    形式呈现下规则的理解程度打1~5颗星。1星代表不能理解，5星代表完全理解。完成后请右翻查看规则3种解释：
-                  </p>
-                  <el-rate
-                    @change="handleNoExpChange"
-                    v-model="scores.noexp"
-                  ></el-rate>
-                </div>
-              </el-carousel-item>
               <el-carousel-item v-bind:class="{ grayActive: isGrayActive }">
                 <div class="explain">
                   <h2><span style="color:red;">实例</span>解释方式：</h2>
@@ -52,14 +51,6 @@
                     {{ rules.instance }}
                   </p>
                   <br /><br />
-                  <p>
-                    请对<span style="color:red;">实例</span>
-                    解释方式对您理解规则的帮助程度打分，分数越高表示这种方式越能辅助理解：
-                  </p>
-                  <el-rate
-                    @change="handleInsChange"
-                    v-model="scores.ins"
-                  ></el-rate>
                 </div>
               </el-carousel-item>
               <el-carousel-item v-bind:class="{ grayActive: isGrayActive }">
@@ -67,14 +58,6 @@
                   <h2><span style="color:red;">自然语言</span>解释方式：</h2>
                   <p style="text-align: center">{{ rules.nl }}</p>
                   <br /><br />
-                  <p>
-                    请对<span style="color: red">自然语言</span>
-                    解释方式对您理解规则的帮助程度打分，分数越高表示这种方式越能辅助理解：
-                  </p>
-                  <el-rate
-                    @change="handleNlChange"
-                    v-model="scores.nl"
-                  ></el-rate>
                 </div>
               </el-carousel-item>
               <el-carousel-item
@@ -90,14 +73,6 @@
                       style="display: block;width: 77%;padding: 30px;box-sizing: border-box;margin: 0 auto;"
                     />
                   </div>
-                  <p>
-                    请对<span style="color: red">知识图谱</span>
-                    解释方式对您理解规则的帮助程度打分，分数越高表示这种方式越能辅助理解：
-                  </p>
-                  <el-rate
-                    @change="handleKgChange"
-                    v-model="scores.kg"
-                  ></el-rate>
                 </div>
               </el-carousel-item>
             </el-carousel>
@@ -125,17 +100,22 @@
             class="item"
             :disabled="canNext"
             effect="dark"
-            content="请在完成所有评分及题目回答后再点击下一题"
+            content="请在回答后再点击下一题"
             placement="top-start"
           >
             <div class="btn">
-              <el-button type="primary" @click="nextRule" :disabled="!canNext || nextBusy">
+              <el-button
+                type="primary"
+                @click="nextRule"
+                :disabled="!canNext || nextBusy"
+              >
                 下一题
               </el-button>
             </div>
           </el-tooltip>
         </div>
       </div>
+
       <div class="overallScros" v-show="!isScoreShow">
         <div class="infos">
           <div class="block">
@@ -144,40 +124,45 @@
               <el-form
                 ref="overallScore"
                 :model="overallScores"
-                label-width="250px"
+                label-width="170px"
               >
-                <el-form-item label="您最喜欢的解释方式是">
-                  <el-radio-group v-model="overallScores.like">
-                    <el-radio label="INS" @click="likeReasonShow">实例</el-radio>
-                    <el-radio label="NL" @click="likeReasonShow">自然语言</el-radio>
-                    <el-radio label="KG" @click="likeReasonShow">知识图谱</el-radio>
-                    <el-radio label="NO" @click="likeReasonClose">无偏好</el-radio>
-                  </el-radio-group>
+                <p>■ 打分题（1-5分表示程度）</p>
+                <el-form-item
+                  label="您觉得每题首次出现的辅助界面对于您理解规则有帮助吗？"
+                  label-width="450px"
+                >
+                  <el-rate
+                    style="line-height: 46px"
+                    v-model="overallScores.q1"
+                  ></el-rate>
                 </el-form-item>
-                <el-form-item label="喜欢的原因是" v-show="!isLikeReasonShow">
+                <el-form-item
+                  label="您觉得您切换后的辅助界面对您理解规则有帮助吗？"
+                  label-width="450px"
+                >
+                  <el-rate
+                    style="line-height: 46px"
+                    v-model="overallScores.q2"
+                  ></el-rate>
+                </el-form-item>
+                <p>■ 填空题</p>
+                <el-form-item
+                  class="switch-question"
+                  label="您为什么会切换界面？什么时候切换界面？"
+                >
                   <el-input
                     type="textarea"
-                    v-model="overallScores.likeReason"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item label="您最不喜欢的解释方式是">
-                  <el-radio-group v-model="overallScores.dislike">
-                    <el-radio label="INS" @click="notLikeReasonShow">实例</el-radio>
-                    <el-radio label="NL" @click="notLikeReasonShow">自然语言</el-radio>
-                    <el-radio label="KG" @click="notLikeReasonShow">知识图谱</el-radio>
-                    <el-radio label="NO" @click="notLikeReasonClose">无偏好</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="不喜欢的原因是" v-show="!isNotLikeReasonShow">
-                  <el-input
-                    type="textarea"
-                    v-model="overallScores.dislikeReason"
+                    v-model="overallScores.whyChange"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="onSubmit"
-                    >进入下一组题目</el-button
-                  >
+                  <el-button type="primary" @click="onSubmit">
+                    {{
+                      ruleIndex === ruleIdList.length - 1
+                        ? '提交'
+                        : '第一组已完成，提交进入第二组测试'
+                    }}
+                  </el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -195,9 +180,13 @@ import {
   qRule,
   answer,
   userAct,
+  addGroupComment,
+  getPageOrder,
   getJobStatus,
-  ratingSheet,
-  ratingSheetComplete
+  groupCommentComplete,
+  getCoinInfo,
+  coinInfoNext,
+  coinInfoPageSwitch
 } from '@/service'
 import { ElMessageBox } from 'element-plus'
 
@@ -206,45 +195,48 @@ export default {
   components: {
     'i-time-indicator': TimeIndicator
   },
-  beforeMount() {
-    this.shuffle()
-  },
   async mounted() {
     this.$refs['indicator'].initiate()
-    console.log(this.numList)
     const jobId = this.$route.params.jobId
     const ruleIdList = await getRules(jobId)
     this.ruleIdList = ruleIdList.data.data
+    await this.sendLog('start')
+    const coinInfo = (await getCoinInfo()).data.data
+    console.log(coinInfo.currentIndex)
+    this.coins = coinInfo.count
     await this.getCurrentRule()
+    this.activePageIndex = coinInfo.currentIndex
+    this.$refs.car.setActiveItem(this.pageOrder[this.activePageIndex])
     const jobStatus = await getJobStatus(jobId)
     if (jobStatus.data.data !== -1) {
       this.ruleIndex = jobStatus.data.data
     }
-    if (this.ruleIndex > 0 && this.ruleIndex % 5 === 0) {
-      const isCompleteRatingSheet = await ratingSheetComplete(jobId, this.ruleIndex)
-      if (!isCompleteRatingSheet.data.data) {
+    if (this.ruleIndex > 0 && this.ruleIndex % 10 === 0) {
+      const isCompleteGroupComment = await groupCommentComplete(
+        jobId,
+        this.ruleIndex
+      )
+      if (!isCompleteGroupComment.data.data) {
         this.ruleIndex--
         this.isScoreShow = false
       }
     }
-    await this.sendLog('start')
+    this.resetAll()
+    await this.$nextTick(() => {
+      this.showTip = true
+      setTimeout(() => {
+        this.showTip = false
+      }, 5 * 1000)
+    })
   },
   computed: {
     canNext() {
-      return (
-        this.answer !== '' &&
-        this.scores.noexp !== 0 &&
-        this.scores.ins !== 0 &&
-        this.scores.nl !== 0 &&
-        this.scores.kg !== 0
-      )
+      return this.answer !== ''
     }
   },
   data() {
     return {
       isScoreShow: true,
-      isLikeReasonShow: true,
-      isNotLikeReasonShow: true,
       ruleIndex: 0,
       ruleIdList: [],
       rules: {},
@@ -252,62 +244,38 @@ export default {
       disabled: true,
       isGrayActive: true,
       overallScores: {
-        like: '',
-        dislike: '',
-        likeReason: '',
-        dislikeReason: ''
-      },
-      scores: {
-        noexp: 0,
-        ins: 0,
-        nl: 0,
-        kg: 0
+        q1: 0,
+        q2: 0,
+        whyChange: ''
       },
       nextBusy: false,
-      numList: [0, 1, 2, 3],
-      carouselValue: 0,
-      virtualIndex: 0,
-      cancelNext: false
+      showTip: false,
+      coins: 40,
+      pageOrder: [2, 1, 0],
+      activePageIndex: 0
     }
   },
   methods: {
-    shuffle() {
-      let arr = [1, 2, 3]
-      arr = arr.sort(function() {
-        return 0.5 - Math.random()
-      })
-      this.numList = [0, ...arr]
-      console.log(this.numList)
-    },
-    // reset() {
-    //   this.answer = ''
-    //   this.$refs['car'].setActiveItem(0)
-    //   if (process.env.NODE_ENV === 'dev') {
-    //     this.scores.noexp = 4
-    //     this.scores.ins = 4
-    //     this.scores.nl = 4
-    //     this.scores.kg = 5
-    //   }
-    // },
     resetAll() {
-      this.shuffle()
-      if (this.carouselValue !== 0) this.cancelNext = true
-      this.carouselValue = 0
-      this.virtualIndex = 0
       this.answer = ''
-      this.scores.noexp = 0
-      this.scores.ins = 0
-      this.scores.nl = 0
-      this.scores.kg = 0
-      this.$refs['car'].setActiveItem(0)
       if (process.env.NODE_ENV === 'dev') {
-        this.scores.noexp = 4
-        this.scores.ins = 4
-        this.scores.nl = 4
-        this.scores.kg = 5
+        this.answer = 'TRUE'
       }
     },
     async getCurrentRule() {
+      const types = ['INS', 'NL', 'KG']
+      const order = await getPageOrder(this.ruleIdList[this.ruleIndex])
+      this.pageOrder = [
+        types.indexOf(order.data.data[0]),
+        types.indexOf(order.data.data[1]),
+        types.indexOf(order.data.data[2])
+      ]
+      console.log(this.pageOrder)
+      this.activePageIndex = 0
+      this.$refs['car'].setActiveItem(this.pageOrder[0])
+      await this.sendLog(
+        `carousel-switch-${types[this.pageOrder[this.activePageIndex]]}`
+      )
       const ruleData = await qRule(this.ruleIdList[this.ruleIndex])
       this.rules = ruleData.data.data
     },
@@ -316,39 +284,18 @@ export default {
       this.disabled = false
       await this.sendLog(`answer-${s}`)
     },
-    likeReasonShow(){
-      this.isLikeReasonShow = false
-    },
-    likeReasonClose(){
-      this.isLikeReasonShow = true
-    },
-    notLikeReasonShow(){
-      this.isNotLikeReasonShow = false
-    },
-    notLikeReasonClose(){
-      this.isNotLikeReasonShow = true
-    },
     async nextRule() {
       this.nextBusy = true
-      for (const k in this.scores)
-        if (Object.prototype.hasOwnProperty.call(this.scores, k)) {
-          if (this.scores[k] === 0) {
-            await ElMessageBox({
-              type: 'warning',
-              message: '请完成评分'
-            })
-            return
-          }
-        }
       await this.sendLog(`next-rule`)
+      await coinInfoNext()
       const res = await answer(
         this.$route.params.jobId,
         this.ruleIdList[this.ruleIndex],
         this.answer,
-        this.scores.noexp,
-        this.scores.kg,
-        this.scores.nl,
-        this.scores.ins
+        0,
+        0,
+        0,
+        0
       )
       if (!res.data.data) {
         await ElMessageBox({
@@ -360,18 +307,18 @@ export default {
         return
       }
 
-      if ((this.ruleIndex + 1) % 5 === 0) {
+      if ((this.ruleIndex + 1) % 10 === 0) {
         this.isScoreShow = false
         return
       }
 
-      if (this.ruleIndex === this.ruleIdList.length - 1) {
-        await this.$router.push({
-          name: 'check',
-          params: { jobId: this.$route.params.jobId }
-        })
-        return
-      }
+      // if (this.ruleIndex === this.ruleIdList.length - 1) {
+      //   await this.$router.push({
+      //     name: 'check',
+      //     params: { jobId: this.$route.params.jobId }
+      //   })
+      //   return
+      // }
 
       this.ruleIndex++
       await this.getCurrentRule()
@@ -399,43 +346,43 @@ export default {
       )
       if (res.data.msg) console.error(res.data.msg)
     },
-    async handleSwitch(e) {
-      // if (e === this.carouselValue) return
-      console.log(`e is ${e} and cancel is ${this.cancelNext}`)
-      if (this.cancelNext) {
-        this.cancelNext = false
-        return
-      }
-      console.log(`values: {cv: ${this.carouselValue}, vi: ${this.virtualIndex}}`)
-      if ((this.carouselValue + 1) % 4 === e) {
-        this.virtualIndex = this.virtualIndex === 3 ? 0 : this.virtualIndex + 1
-      } else {
-        this.virtualIndex = this.virtualIndex === 0 ? 3 : this.virtualIndex - 1
-      }
-      const types = ['noexp', 'ins', 'nl', 'kg']
-      this.$refs.car.setActiveItem(this.numList[this.virtualIndex])
-      this.carouselValue = this.numList[this.virtualIndex]
-      console.log(`values: {cv: ${this.carouselValue}, vi: ${this.virtualIndex}}`)
-      if (this.numList[this.virtualIndex] !== e) this.cancelNext = true
-      await this.sendLog(`carousel-switch-${types[this.carouselValue]}`)
-    },
-    async handleNoExpChange(e) {
-      await this.sendLog(`rating-noexp-${e}`)
-    },
-    async handleInsChange(e) {
-      await this.sendLog(`rating-ins-${e}`)
-    },
-    async handleNlChange(e) {
-      await this.sendLog(`rating-nl-${e}`)
-    },
-    async handleKgChange(e) {
-      await this.sendLog(`rating-kg-${e}`)
+    handlePageNext() {
+      if (this.activePageIndex === 2) return
+      ElMessageBox.confirm(
+        '请问您确定要切换界面吗？我们鼓励您在没有把握理解题意的情况下切换界面，虽然切换界面需要扣除一个金币，但答对一题会增加三个金币，答错无金币。',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.activePageIndex++
+          this.coins--
+          this.$refs.car.setActiveItem(this.pageOrder[this.activePageIndex])
+          const types = ['INS', 'NL', 'KG']
+          coinInfoPageSwitch(this.activePageIndex)
+          this.sendLog(
+            `carousel-switch-${types[this.pageOrder[this.activePageIndex]]}`
+          )
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消切换'
+          })
+        })
     },
     async onSubmit() {
+      if (process.env.NODE_ENV === 'dev') {
+        this.overallScores.q1 = 3
+        this.overallScores.q2 = 3
+        this.overallScores.whyChange = '123'
+      }
       if (
-          [this.overallScores.like, this.overallScores.dislike].some(e => e ==='') ||
-          (this.overallScores.like !== 'NO' && this.overallScores.likeReason === '') ||
-          (this.overallScores.dislike !== 'NO' && this.overallScores.dislikeReason === '')
+        [this.overallScores.q1, this.overallScores.q2].some(e => !e) ||
+        (this.overallScores.q1 !== 'NO' && this.overallScores.whyChange === '')
       ) {
         await ElMessageBox({
           type: 'warning',
@@ -443,32 +390,30 @@ export default {
         })
         return
       }
-      await ratingSheet(
+      await addGroupComment(
         this.$route.params.jobId,
         this.ruleIdList[this.ruleIndex],
-        this.overallScores.like,
-        this.overallScores.dislike,
-        this.overallScores.likeReason,
-        this.overallScores.dislikeReason
+        this.overallScores.q1,
+        this.overallScores.q2,
+        this.overallScores.whyChange
       )
-      this.isScoreShow = true
-      this.overallScores.like = ''
-      this.overallScores.dislike = ''
-      this.overallScores.likeReason = ''
-      this.overallScores.dislikeReason = ''
-      this.isLikeReasonShow = true
-      this.isNotLikeReasonShow = true
-      this.ruleIndex++
-      await this.getCurrentRule()
-      this.nextBusy = false
-      if (this.ruleIndex === this.ruleIdList.length) {
+      if (this.ruleIndex === this.ruleIdList.length - 1) {
+        await this.sendLog(`coins-${this.coins}`)
         await this.$router.push({
-          name: 'check',
+          name: 'questionOverall',
           params: { jobId: this.$route.params.jobId }
         })
         return
       }
+      this.ruleIndex++
+      await this.getCurrentRule()
+      this.nextBusy = false
       this.resetAll()
+      this.isScoreShow = true
+
+      this.overallScores.q1 = 0
+      this.overallScores.q2 = 0
+      this.overallScores.whyChange = ''
     }
   }
 }
@@ -508,6 +453,11 @@ export default {
   height: 55px;
   background-color: #bbb;
 }
+
+.carousel ::v-deep(.is-animating) {
+  transition: 0s;
+}
+
 .action {
   margin-top: 60px;
   text-align: center;
@@ -521,21 +471,6 @@ export default {
   border: 1px solid #bbb;
   border-radius: 10px;
   margin-top: 20px;
-}
-
-.carousel ::v-deep(.el-carousel__button) {
-  background-color: #9f9f9f;
-}
-.carousel ::v-deep(.el-rate__icon) {
-  /*font-size: 30px;*/
-}
-.carousel ::v-deep(.el-icon-star-off) {
-  color: #2c3e50 !important;
-  font-size: 24px;
-}
-.carousel ::v-deep(.el-icon-star-on) {
-  /*color: #2c3e50 !important;*/
-  font-size: 29px;
 }
 
 .el-carousel__item h3 {
@@ -584,5 +519,35 @@ export default {
 }
 .grayActive {
   background-color: rgba(235, 237, 240, 1);
+}
+
+.next-page {
+  position: absolute;
+  font-size: 24px;
+  right: 1em;
+  z-index: 10;
+  top: 50%;
+  background-color: #ffffff;
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  line-height: 2em;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: -1px 1px 4px 1px #bfbfbf;
+  transition: 500ms;
+}
+
+.next-page:hover {
+  background-color: #cfcfcf;
+}
+
+.next-page:active {
+  background-color: #5f5f5f;
+}
+
+.switch-question ::v-deep(.el-form-item__label) {
+  line-height: 20px;
+  width: 160px !important;
 }
 </style>

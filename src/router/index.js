@@ -12,9 +12,15 @@ const routes = [
     redirect: '/workdesc',
     children: [
       {
-        path: '/workdesc/:jobId',
-        name: 'workdesc',
-        component: () => import('../components/work/workDesc.vue'),
+        path: '/workdesc1/:jobId',
+        name: 'workdesc1',
+        component: () => import('../components/work/workDesc1.vue'),
+        props: true
+      },
+      {
+        path: '/workdesc2/:jobId',
+        name: 'workdesc2',
+        component: () => import('../components/work/workDesc2.vue'),
         props: true
       },
       {
@@ -30,9 +36,21 @@ const routes = [
         props: true
       },
       {
+        path: '/workdo1/:jobId',
+        name: 'workdo1',
+        component: () => import('../components/work/workDo1.vue'),
+        props: true
+      },
+      {
         path: '/workdo2/:jobId',
-        name: 'workdo',
+        name: 'workdo2',
         component: () => import('../components/work/workDo2.vue'),
+        props: true
+      },
+      {
+        path: '/questionOverall/:jobId',
+        name: 'questionOverall',
+        component: () => import('../components/work/questionOverall.vue'),
         props: true
       }
     ]
@@ -101,22 +119,32 @@ const routes = [
     component: () => import('../components/KBPages/Home.vue')
   },
   {
-    path: '/kb/entity',
+    path: '/kb/entity/:entity',
     name: 'entity',
-    component: () => import('../components/KBPages/Entity.vue')
+    component: () => import('../components/KBPages/Entity.vue'),
+    props: true
   },
   {
-    path: '/kb/relationship',
+    path: '/kb/relationship/:entity/:rel/:position',
     name: 'relationship',
-    component: () => import('../components/KBPages/Relationship.vue')
+    component: () => import('../components/KBPages/Relationship.vue'),
+    props: true
+  },
+  {
+    path: '/kb/ckqa',
+    name: 'qa',
+    component: () => import('../components/KBPages/QA.vue')
+  },
+  {
+    path: '/kb/oie',
+    name: 'oie',
+    component: () => import('../components/KBPages/OIE.vue')
   },
   {
     path: '/',
     redirect: '/login'
   }
 ]
-
-console.log(process.env.BASE_URL)
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

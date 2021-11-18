@@ -31,7 +31,7 @@ export default {
       const res = await getQuestionnaire(jobId)
       if (res.data.data !== null) {
         await this.$router.push({
-          name: 'workdo',
+          name: 'workdo1',
           params: { jobId }
         })
       } else {

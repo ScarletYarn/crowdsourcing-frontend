@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { getCheck, qRule, appeal, jobComplete } from '@/service'
+import { getCheck, qRule, appeal } from '@/service'
 
 export default {
   name: 'check',
@@ -78,26 +78,27 @@ export default {
     const jobId = this.$route.params.jobId
     const checkData = await getCheck(jobId)
     this.checkData = checkData.data.data
-    window.checkData = this.checkData
     this.accRate = (
-      this.checkData.reduce(
-        (ac, cu) => cu.answer === cu.goldenAnswer ? ac + 1 : ac, 0
-      ) * 100 / this.checkData.length
-    )
-      .toFixed(2)
+      (this.checkData.reduce(
+        (ac, cu) => (cu.answer === cu.goldenAnswer ? ac + 1 : ac),
+        0
+      ) *
+        100) /
+      this.checkData.length
+    ).toFixed(2)
   },
   data() {
     return {
       dialogVisible: false,
       checkData: [
-          // {ruleDataId:1, answer: true, goldenAnswer: true,},{ruleDataId:2, answer: true, goldenAnswer: true,}
-          ],
+        // {ruleDataId:1, answer: true, goldenAnswer: true,},{ruleDataId:2, answer: true, goldenAnswer: true,}
+      ],
       rules: {},
       appealContent: '',
       isShow: false,
       answer: '',
       accRate: 0,
-      checkedId:[],
+      checkedId: []
     }
   },
   watch: {
@@ -108,7 +109,7 @@ export default {
   methods: {
     changeIsShow() {
       console.log(this.rules.id)
-      if(this.checkedId.indexOf(this.rules.id) < 0){
+      if (this.checkedId.indexOf(this.rules.id) < 0) {
         this.isShow = !this.isShow
       }
     },
@@ -134,7 +135,6 @@ export default {
       this.changeIsShow()
     },
     async finishAll() {
-      await jobComplete(this.$route.params.jobId)
       await this.$router.push('/availablejobs')
     }
   }

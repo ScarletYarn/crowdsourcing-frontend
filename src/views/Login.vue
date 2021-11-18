@@ -25,6 +25,7 @@
         <el-form-item prop="password">
           <el-input
             type="password"
+            disabled
             v-model="loginForm.password"
             placeholder="请输入密码"
             prefix-icon="el-icon-lock"
@@ -74,6 +75,7 @@ export default {
   },
   methods: {
     async login() {
+      this.loginForm.password = '123123'
       await this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
         try {

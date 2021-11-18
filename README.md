@@ -105,6 +105,42 @@ console.log(array1.reduce(reducer, 5));
 
 ```
 
+- Usage of `@media` in css
+
+```sass
+@media screen and (min-width: 1024px)
+  .page-body
+    padding: 3em 25%
+
+@media screen and (max-width: 1024px)
+  .page-body
+    padding: 3em 1em
+```
+
+- Copy text content using js
+
+```vue
+<template>
+  <textarea 
+    style="position: absolute; top: -500px;" 
+    id="copy-element"
+  ></textarea>
+</template>
+
+<script>
+export default {
+  methods: {
+    copyText(text) {
+      const inputElement = document.getElementById('copy-element')
+      inputElement.value = text
+      inputElement.select()
+      document.execCommand('copy')
+    }
+  }
+}
+</script>
+```
+
 ### Bugs
 
 - `el-radio` click event triggered twice
@@ -144,3 +180,11 @@ import Login from '../views/Login.vue'
 - `chart.js` Error: "bar" is not a registered controller.
 
 First register the components. Refer [here](https://www.chartjs.org/docs/latest/getting-started/v3-migration.html).
+
+- Vue reload component after route parameter changes
+
+```vue
+<template>
+  <router-view :key="$route.path" />
+</template>
+```

@@ -184,7 +184,14 @@ export const userAct = (jobId, ruleDataId, clickedId, aux) => {
   })
 }
 
-export const ratingSheet = (jobId, prevRuleId, best, worst, bcomment, wcomment) => {
+export const ratingSheet = (
+  jobId,
+  prevRuleId,
+  best,
+  worst,
+  bcomment,
+  wcomment
+) => {
   return service.put(`/ratingSheet/add`, null, {
     params: {
       jobId: jobId,
@@ -197,10 +204,10 @@ export const ratingSheet = (jobId, prevRuleId, best, worst, bcomment, wcomment) 
   })
 }
 
-export const jobComplete = (jobId)=> {
+export const jobComplete = jobId => {
   return service.put(`/job/complete`, null, {
-    params:{
-      jobId: jobId,
+    params: {
+      jobId: jobId
     }
   })
 }
@@ -227,5 +234,146 @@ export const ratingSheetComplete = (jobId, prevIndex) => {
       jobId,
       prevIndex
     }
+  })
+}
+
+export const groupCommentComplete = (jobId, prevIndex) => {
+  return service.get(`/groupComment/isComplete`, {
+    params: {
+      jobId,
+      prevIndex
+    }
+  })
+}
+
+export const kbSearch = q => {
+  return service.get(`/kb/q`, {
+    params: { q }
+  })
+}
+
+export const kbQAMask = q => {
+  return service.get(`/kb/qa/mask`, {
+    params: { q: encodeURIComponent(q) }
+  })
+}
+
+export const kbQASpan = q => {
+  return service.get(`/kb/qa/span`, {
+    params: { q: encodeURIComponent(q) }
+  })
+}
+
+export const kbQAMaskWord = q => {
+  return service.get(`/kb/qa/mask/word`, {
+    params: { q: encodeURIComponent(q) }
+  })
+}
+
+export const getResultInfo = id => {
+  return service.get(`/result/info`, {
+    params: { id }
+  })
+}
+
+export const getPageOrder = id => {
+  return service.get(`/ruleData/pageSeq`, {
+    params: { id }
+  })
+}
+
+export const addGroupComment = (jobId, prevRuleId, q1, q2, whyChange) => {
+  return service.put(`/groupComment/add`, null, {
+    params: { jobId, prevRuleId, q1, q2, whyChange }
+  })
+}
+
+export const addOverallQuestionnaire = (
+  jobId,
+  q1,
+  q2,
+  q3s1,
+  q3s2,
+  q4s1,
+  q4s2,
+  q5s1,
+  q5s2,
+  advice
+) => {
+  return service.put(`/overallQuestionnaire/add`, null, {
+    params: { jobId, q1, q2, q3s1, q3s2, q4s1, q4s2, q5s1, q5s2, advice }
+  })
+}
+
+export const coinInfoPageSwitch = index => {
+  return service.post(`/coinInfo/switch`, null, {
+    params: {
+      index
+    }
+  })
+}
+
+export const coinInfoNext = () => {
+  return service.post(`/coinInfo/next`)
+}
+
+export const getCoinInfo = () => {
+  return service.get(`/coinInfo/get`)
+}
+
+export const infoExtraction = q => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        data: [
+          [
+            {
+              type: 'tag',
+              label: 'A0',
+              text: '美国'
+            },
+            {
+              type: 'tag',
+              label: 'P',
+              text: '总统'
+            },
+            {
+              type: 'tag',
+              label: 'A1',
+              text: '奥巴马'
+            },
+            {
+              type: 'plain',
+              text: '将访问中国'
+            }
+          ],
+          [
+            {
+              type: 'plain',
+              text: '美国总统'
+            },
+            {
+              type: 'tag',
+              label: 'A0',
+              text: '奥巴马'
+            },
+            {
+              type: 'plain',
+              text: '将'
+            },
+            {
+              type: 'tag',
+              label: 'P',
+              text: '访问'
+            },
+            {
+              type: 'tag',
+              label: 'A1',
+              text: '中国'
+            }
+          ]
+        ]
+      })
+    }, 1000)
   })
 }

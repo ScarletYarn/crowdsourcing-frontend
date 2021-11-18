@@ -5,6 +5,7 @@
         placeholder="输入词条搜索"
         suffix-icon="el-icon-search"
         v-model="search"
+        @keyup.enter="q()"
       >
       </el-input>
       <div class="hint">例：人工智能、大学</div>
@@ -13,25 +14,21 @@
 </template>
 
 <script>
-import GStoreClient from 'gstore-whu'
-
 export default {
   name: 'Home',
-  async mounted() {
-    const client = new GStoreClient(
-      'root',
-      '123456',
-      'http://192.168.10.174:9000'
-    )
-    const result = await client.query(
-      'cskg',
-      'select ?x where { <早睡早起> <MotivatedByGoal> ?x. }'
-    )
-    console.log(result)
-  },
   data() {
     return {
       search: ''
+    }
+  },
+  methods: {
+    async q() {
+      await this.$router.push({
+        name: 'entity',
+        params: {
+          entity: this.search
+        }
+      })
     }
   }
 }

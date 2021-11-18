@@ -547,7 +547,7 @@ export default {
           )
           if (res.data.data) {
             await this.$router.push({
-              name: 'workdo',
+              name: 'workdo1',
               params: {
                 jobId: this.$route.params.jobId
               }

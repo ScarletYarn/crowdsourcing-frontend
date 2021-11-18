@@ -44,7 +44,9 @@ import {
   ElProgress,
   ElTag,
   ElPopover,
-  ElCascader
+  ElCascader,
+  ElPopper,
+  ElLoading
 } from 'element-plus'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
 import locale from 'element-plus/lib/locale'
@@ -98,4 +100,6 @@ export default app => {
   app.use(ElProgress)
   app.use(ElTag)
   app.use(ElCascader)
+  app.use(ElPopper)
+  app.use(ElLoading)
 }
