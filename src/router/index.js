@@ -136,6 +136,11 @@ const routes = [
     component: () => import('../components/KBPages/QA.vue')
   },
   {
+    path: '/kb/nqa',
+    name: 'nqa',
+    component: () => import('../components/KBPages/NQA.vue')
+  },
+  {
     path: '/kb/oie',
     name: 'oie',
     component: () => import('../components/KBPages/OIE.vue')

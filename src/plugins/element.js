@@ -46,7 +46,9 @@ import {
   ElPopover,
   ElCascader,
   ElPopper,
-  ElLoading
+  ElLoading,
+  ElTabs,
+  ElTabPane
 } from 'element-plus'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
 import locale from 'element-plus/lib/locale'
@@ -102,4 +104,6 @@ export default app => {
   app.use(ElCascader)
   app.use(ElPopper)
   app.use(ElLoading)
+  app.use(ElTabs)
+  app.use(ElTabPane)
 }
