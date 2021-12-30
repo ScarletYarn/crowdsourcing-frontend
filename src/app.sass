@@ -2,6 +2,21 @@
   cursor: pointer
   text-decoration: underline
 
+@mixin button
+  color: white
+  display: inline-block
+  cursor: pointer
+  user-select: none
+  transition: .2s
+  border-radius: 4px
+
+  &:hover
+    opacity: .7
+
+$primary: #118AB2
+$attention: #F24E6E
+$cancel: #828282
+
 .lds-circle
   display: inline-block
   transform: translateZ(1px)

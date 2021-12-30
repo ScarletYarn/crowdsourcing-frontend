@@ -66,7 +66,49 @@
                 </el-option>
               </el-select>
             </div>
-            <div class="edit-button">Edit</div>
+            <div class="edit-button" @click="seq.editDialog = true">Edit</div>
+            <el-dialog v-model="seq.editDialog" title="Edit Extraction">
+              <div v-for="(tag, _index) in seq" :key="_index">
+                <div class="edit-section" v-if="tag.type === 'tag'">
+                  <div class="position">{{ tag.label }}</div>
+                  <div class="number-edit">
+                    <div class="label">Start</div>
+                    <el-input-number
+                      v-model="tag.startPosition"
+                      :min="0"
+                      :max="10"
+                      class="picker"
+                      controls-position="right"
+                    />
+                  </div>
+                  <div class="number-edit">
+                    <div class="label">Length</div>
+                    <el-input-number
+                      v-model="tag.editLength"
+                      :min="1"
+                      :max="10"
+                      class="picker"
+                      controls-position="right"
+                    />
+                  </div>
+                  <div class="body">
+                    {{ seq.textBody }}
+                    <div
+                      class="indicator"
+                      :style="
+                        `left: ${tag.startPosition}em; width: ${tag.editLength}em`
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div class="action-section">
+                <div class="discard-button" @click="seq.editDialog = false">
+                  Discard
+                </div>
+                <div class="save-button">Save</div>
+              </div>
+            </el-dialog>
           </div>
         </div>
         <div class="empty-result" v-if="noResult">
@@ -114,7 +156,10 @@ export default {
           label: 'Option5'
         }
       ],
-      value: null
+      value: null,
+      editDialog: false,
+      startPosition: 0,
+      length: 1
     }
   },
   methods: {
@@ -123,9 +168,14 @@ export default {
       const res = await infoExtraction(this.query)
       for (let seq of res.data) {
         let tagIndex = 0
+        seq.editDialog = false
+        seq.textBody = ''
         for (let tag of seq) {
+          seq.textBody += tag.text
           if (tag.type === 'tag') {
             tag.color = this.predefinedColors[tagIndex++]
+            tag.startPosition = 0
+            tag.editLength = 1
           }
         }
       }
@@ -143,6 +193,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@import "src/app"
+
 .page-body
   background-color: rgba(177, 147, 147, .17)
   width: 100%
@@ -162,17 +214,10 @@ export default {
   margin-top: .8em
 
 .submit
-  background-color: rgb(17,138,178)
-  color: white
+  @include button
+  background-color: $primary
   padding: .7em
-  display: inline-block
   margin: 1em 0
-  cursor: pointer
-  user-select: none
-  transition: .2s
-
-  &:hover
-    opacity: .7
 
 .el-select
   width: 100%
@@ -195,17 +240,10 @@ export default {
     margin-bottom: 1em
 
   .save-button
-    background-color: rgb(17,138,178)
-    color: white
+    @include button
+    background-color: $primary
     padding: .3em 1em
-    display: inline-block
     margin: 1em 0.5em
-    cursor: pointer
-    user-select: none
-    transition: .2s
-
-    &:hover
-      opacity: .7
 
   .output-data
     .result-row
@@ -239,21 +277,13 @@ export default {
         width: 100%
 
       .edit-button
-        background-color: #f24e6e
-        color: white
+        @include button
+        background-color: $attention
         padding: .3em 1em
-        border-radius: 4px
-        display: inline-block
         margin: 1em 0
-        cursor: pointer
-        user-select: none
-        transition: .2s
         width: 100%
         box-sizing: border-box
         text-align: center
-
-        &:hover
-          opacity: .7
 
 .empty-result
   color: rgb(150,150,150)
@@ -265,4 +295,48 @@ export default {
 
 .qa-mode
   margin-top: 1em
+
+.edit-section
+  padding: 1em
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  align-items: center
+
+  .body
+    position: relative
+
+  .indicator
+    background-color: $primary
+    height: 2px
+    position: absolute
+    bottom: 0
+
+  .number-edit
+    display: flex
+    flex-direction: row
+    justify-content: start
+    align-items: center
+
+    .label
+      margin-right: 1em
+
+    .picker
+      width: 7em
+
+  .position
+    font-weight: bold
+    min-width: 3em
+
+.action-section
+  display: flex
+  flex-direction: row
+  justify-content: end
+  align-items: center
+
+  .discard-button
+    @include button
+    background-color: $cancel
+    padding: .3em 1em
+    margin: 1em 0.5em
 </style>
