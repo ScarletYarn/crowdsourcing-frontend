@@ -160,8 +160,10 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@import "src/app"
+
 .page-body
-  background-color: rgba(177, 147, 147, .17)
+  background-color: $background
   width: 100%
   height: 100%
   padding: 4em
@@ -179,7 +181,7 @@ export default {
   margin-top: .8em
 
 .submit
-  background-color: rgb(17,138,178)
+  background-color: $primary
   color: white
   padding: .7em
   display: inline-block

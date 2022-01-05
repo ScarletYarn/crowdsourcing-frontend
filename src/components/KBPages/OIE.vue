@@ -71,34 +71,19 @@
               <div v-for="(tag, _index) in seq" :key="_index">
                 <div class="edit-section" v-if="tag.type === 'tag'">
                   <div class="position">{{ tag.label }}</div>
-                  <div class="number-edit">
-                    <div class="label">Start</div>
-                    <el-input-number
-                      v-model="tag.startPosition"
-                      :min="0"
-                      :max="10"
-                      class="picker"
-                      controls-position="right"
-                    />
-                  </div>
-                  <div class="number-edit">
-                    <div class="label">Length</div>
-                    <el-input-number
-                      v-model="tag.editLength"
-                      :min="1"
-                      :max="10"
-                      class="picker"
-                      controls-position="right"
-                    />
-                  </div>
                   <div class="body">
-                    {{ seq.textBody }}
-                    <div
-                      class="indicator"
-                      :style="
-                        `left: ${tag.startPosition}em; width: ${tag.editLength}em`
+                    <span
+                      :class="{
+                        'active-select': tag.textInSelect[__index]
+                      }"
+                      v-for="(c, __index) in seq.textBody"
+                      :key="__index"
+                      @click="
+                        tag.textInSelect[__index] = !tag.textInSelect[__index]
                       "
-                    ></div>
+                    >
+                      {{ c }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -170,14 +155,24 @@ export default {
         let tagIndex = 0
         seq.editDialog = false
         seq.textBody = ''
-        for (let tag of seq) {
+        seq.map(tag => {
           seq.textBody += tag.text
           if (tag.type === 'tag') {
             tag.color = this.predefinedColors[tagIndex++]
-            tag.startPosition = 0
-            tag.editLength = 1
           }
-        }
+        })
+        seq.map(tag => {
+          if (tag.type === 'tag') {
+            tag.textInSelect = Array.from(seq.textBody).map(() => false)
+          }
+        })
+        // for (let tag of seq) {
+        //   seq.textBody += tag.text
+        //   if (tag.type === 'tag') {
+        //     tag.color = this.predefinedColors[tagIndex++]
+        //   }
+        // }
+        // seq.textInSelect = Array.from(seq.textBody).map(() => false)
       }
       this.qaResult = res.data
       console.log(res.data)
@@ -196,7 +191,7 @@ export default {
 @import "src/app"
 
 .page-body
-  background-color: rgba(177, 147, 147, .17)
+  background-color: $background
   width: 100%
   height: 100%
   padding: 4em
@@ -304,25 +299,8 @@ export default {
   align-items: center
 
   .body
-    position: relative
-
-  .indicator
-    background-color: $primary
-    height: 2px
-    position: absolute
-    bottom: 0
-
-  .number-edit
-    display: flex
-    flex-direction: row
-    justify-content: start
-    align-items: center
-
-    .label
-      margin-right: 1em
-
-    .picker
-      width: 7em
+    user-select: none
+    cursor: pointer
 
   .position
     font-weight: bold
@@ -331,7 +309,7 @@ export default {
 .action-section
   display: flex
   flex-direction: row
-  justify-content: end
+  justify-content: flex-end
   align-items: center
 
   .discard-button
@@ -339,4 +317,8 @@ export default {
     background-color: $cancel
     padding: .3em 1em
     margin: 1em 0.5em
+
+.active-select
+  background-color: $warn
+  color: white
 </style>
