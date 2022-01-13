@@ -28,7 +28,9 @@
       <div class="output-title-section">
         <div class="content-area">
           <div class="output-title">Output</div>
-          <div class="output-count">2 total Extractions</div>
+          <div class="output-count">
+            {{ qaResult.length }} total Extractions
+          </div>
         </div>
         <div class="action-area">
           <div class="save-button">Save</div>
@@ -56,7 +58,7 @@
           </div>
           <div class="action-area">
             <div class="category">
-              <el-select v-model="value" placeholder="Select">
+              <el-select v-model="seq.reason" placeholder="Select">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -118,7 +120,7 @@ export default {
       qaResult: [],
       noResult: false,
       loading: false,
-      predefinedColors: ['#1bcae3', '#e396df', '#e37d6c'],
+      predefinedColors: ['#1BCAE3FF', '#E396DFFF', '#E37D6CFF'],
       options: [
         {
           value: 'Option1',
@@ -141,7 +143,6 @@ export default {
           label: 'Option5'
         }
       ],
-      value: null,
       editDialog: false,
       startPosition: 0,
       length: 1
@@ -151,10 +152,11 @@ export default {
     async search() {
       this.loading = true
       const res = await infoExtraction(this.query)
-      for (let seq of res.data) {
+      res.data.map(seq => {
         let tagIndex = 0
         seq.editDialog = false
         seq.textBody = ''
+        seq.reason = null
         seq.map(tag => {
           seq.textBody += tag.text
           if (tag.type === 'tag') {
@@ -166,14 +168,7 @@ export default {
             tag.textInSelect = Array.from(seq.textBody).map(() => false)
           }
         })
-        // for (let tag of seq) {
-        //   seq.textBody += tag.text
-        //   if (tag.type === 'tag') {
-        //     tag.color = this.predefinedColors[tagIndex++]
-        //   }
-        // }
-        // seq.textInSelect = Array.from(seq.textBody).map(() => false)
-      }
+      })
       this.qaResult = res.data
       console.log(res.data)
       this.noResult = this.qaResult.length === 0
