@@ -12,7 +12,6 @@ if (process.env.NODE_ENV === 'dev') document.cookie = 'XSRF-TOKEN=dump'
 const CSRF_TOKEN = 'XSRF-TOKEN=dump'
 
 const service = axios.create({
-  baseURL: BASE_URL,
   withCredentials: process.env.NODE_ENV === 'dev',
   headers: {
     'X-XSRF-TOKEN': CSRF_TOKEN

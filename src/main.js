@@ -8,7 +8,7 @@ import installElementPlus from './plugins/element.js'
 
 import './assets/css/global.css'
 
-// if (process.env.NODE_ENV === 'dev') require('./mock')
+if (process.env.NODE_ENV === 'dev') require('./mock')
 
 const app = createApp(App)
 

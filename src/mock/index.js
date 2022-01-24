@@ -1,5 +1,4 @@
 const Mock = require('mockjs')
-import { BASE_URL } from '@/service'
 
 const universalSuccess = {
   msg: null,
@@ -13,11 +12,11 @@ const succeed = data => {
   }
 }
 
-Mock.mock(`${BASE_URL}/login`, () => true)
-Mock.mock(RegExp(`${BASE_URL}/user/signup` + '.*'), () => universalSuccess)
-Mock.mock(`${BASE_URL}/logout`, () => universalSuccess)
+Mock.mock(/login.*/, true)
+Mock.mock(/user\/signup.*/, () => universalSuccess)
+Mock.mock(/logout.*/, () => universalSuccess)
 
-Mock.mock(`${BASE_URL}/job/all`, () =>
+Mock.mock(/job\/all.*/, () =>
   succeed([
     {
       seq: '10086',
@@ -36,7 +35,7 @@ Mock.mock(`${BASE_URL}/job/all`, () =>
   ])
 )
 
-Mock.mock(RegExp(`${BASE_URL}/job/q?` + '.*'), () =>
+Mock.mock(/job\/q.*/, () =>
   succeed({
     seq: '10010',
     name: '新规则正误判定',
@@ -46,7 +45,7 @@ Mock.mock(RegExp(`${BASE_URL}/job/q?` + '.*'), () =>
   })
 )
 
-Mock.mock(`${BASE_URL}/reward/me`, () =>
+Mock.mock(/reward\/me.*/, () =>
   succeed([
     {
       id: '1233',
@@ -67,7 +66,7 @@ Mock.mock(`${BASE_URL}/reward/me`, () =>
   ])
 )
 
-Mock.mock(`${BASE_URL}/reward/rank`, () =>
+Mock.mock(/reward\/rank.*/, () =>
   succeed([
     {
       reward: '35.00',
@@ -89,20 +88,78 @@ Mock.mock(`${BASE_URL}/reward/rank`, () =>
   ])
 )
 
-Mock.mock(RegExp(`${BASE_URL}/questionnaire/p` + '.*'), () => universalSuccess)
+Mock.mock(/questionnaire\/p.*/, () => universalSuccess)
 
-Mock.mock(RegExp(`${BASE_URL}/ruleData/byJobId` + '.*'), () =>
-  succeed(['12', '23'])
-)
+Mock.mock(/ruleData\/byJobId.*/, () => succeed(['12', '23']))
 
-Mock.mock(RegExp(`${BASE_URL}/ruleData/q` + '.*'), () =>
+Mock.mock(/ruleData\/q.*/, () =>
   succeed({
     id: '223333rfergefr',
     jobId: 'uvhsihisheviev',
     content: '国籍(A,v0) & 简称(v0,v1) & 出生地(B,v0) =>配偶(A,B)',
     graph: '1111111',
     nl: 'v0和A结婚，B的母亲是v0，那么得出B的父亲是A。',
-    instance: '结婚(梅拉尼娅·特朗普,唐纳德·特朗普) & 母亲(伊万卡·特朗普,梅拉尼娅·特朗普 ) =>父亲(伊万卡·特朗普,唐纳德·特朗普 )',
+    instance:
+      '结婚(梅拉尼娅·特朗普,唐纳德·特朗普) & 母亲(伊万卡·特朗普,梅拉尼娅·特朗普 ) =>父亲(伊万卡·特朗普,唐纳德·特朗普 )',
     goldenAnswer: 'ho'
   })
 )
+
+Mock.mock(/kb\/q.*/, () => {
+  return succeed(
+    JSON.stringify({
+      results: {
+        bindings: [
+          {
+            x: {
+              value: '草'
+            },
+            y: {
+              value: '吃'
+            }
+          },
+          {
+            x: {
+              value: '牛奶'
+            },
+            y: {
+              value: '吃'
+            }
+          },
+          {
+            x: {
+              value: '牛'
+            },
+            y: {
+              value: '吃'
+            }
+          },
+          {
+            x: {
+              value: '草原'
+            },
+            y: {
+              value: '喜欢'
+            }
+          },
+          {
+            x: {
+              value: '肉'
+            },
+            y: {
+              value: '喜欢'
+            }
+          },
+          {
+            x: {
+              value: '捕猎'
+            },
+            y: {
+              value: '擅长'
+            }
+          }
+        ]
+      }
+    })
+  )
+})

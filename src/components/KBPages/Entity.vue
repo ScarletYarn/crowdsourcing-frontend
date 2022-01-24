@@ -4,6 +4,62 @@
       style="position: absolute; top: -500px;"
       id="copy-element"
     ></textarea>
+    <el-dialog v-model="editDialog" custom-class="edit-dialog" width='30%' title="常识修订">
+      <div class="choice-section">
+        <div class="title">您认为这条常识？</div>
+        <el-radio-group v-model="wrongType">
+          <el-radio :label="3">知识表述错误</el-radio>
+          <el-radio :label="6">知识表述正确但不是常识</el-radio>
+        </el-radio-group>
+        <div class="triple-edit">
+          <div class="cell">
+            <div class="text">狮子</div>
+            <div class="type">头实体</div>
+          </div>
+          <div class="cell">
+            <div class="text">喜欢</div>
+            <div class="type">关系</div>
+          </div>
+          <div class="cell">
+            <input class="text" />
+            <div class="type">尾实体</div>
+          </div>
+        </div>
+      </div>
+      <div class="other-edit-section">
+        <div class="title">其他用户修订：</div>
+        <div class="other-edit">
+          <div class="content">知识表述正确但不是常识</div>
+          <div class="action">
+            <div class="vote">
+              <i class="el-icon-caret-top"></i>
+              <div class="count">1</div>
+            </div>
+            <div class="vote">
+              <i class="el-icon-caret-bottom"></i>
+              <div class="count">12</div>
+            </div>
+          </div>
+        </div>
+        <div class="other-edit">
+          <div class="content">草->肉</div>
+          <div class="action">
+            <div class="vote">
+              <i class="el-icon-caret-top"></i>
+              <div class="count">1</div>
+            </div>
+            <div class="vote">
+              <i class="el-icon-caret-bottom"></i>
+              <div class="count">12</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-section">
+        <div class="discard-action" @click="editDialog = false">放弃</div>
+        <div class="submit-action">提交</div>
+      </div>
+    </el-dialog>
     <div class="header-section">
       <div class="title-container">
         <div class="title">{{ entity }}</div>
@@ -40,11 +96,15 @@
             class="item"
             v-for="(subItem, subIndex) in item.tails"
             :key="subIndex"
-            @click="
-              $router.push({ name: 'entity', params: { entity: subItem } })
-            "
           >
-            {{ subItem }}
+            <div
+              @click="
+                $router.push({ name: 'entity', params: { entity: subItem } })
+              "
+            >
+              {{ subItem }}
+            </div>
+            <i class="el-icon-edit" @click="editDialog = true"></i>
           </div>
           <div class="more-link" v-if="item.hasMore">
             <span @click="toMore(entity, item.rel, 'head')">More >></span>
@@ -67,11 +127,15 @@
             class="item"
             v-for="(subItem, subIndex) in item.tails"
             :key="subIndex"
-            @click="
-              $router.push({ name: 'entity', params: { entity: subItem } })
-            "
           >
-            {{ subItem }}
+            <div
+              @click="
+                $router.push({ name: 'entity', params: { entity: subItem } })
+              "
+            >
+              {{ subItem }}
+            </div>
+            <i class="el-icon-edit" @click="editDialog = true"></i>
           </div>
           <div class="more-link" v-if="item.hasMore">
             <span @click="toMore(entity, item.rel, 'tail')">More >></span>
@@ -107,7 +171,9 @@ export default {
       tailTriples: [],
       totalItemsCount: 0,
       headApiEndPoint: '',
-      tailApiEndPoint: ''
+      tailApiEndPoint: '',
+      editDialog: false,
+      wrongType: null
     }
   },
   methods: {
@@ -126,7 +192,8 @@ export default {
       const itemMap = {}
       const parsedItems = []
       for (const item of items) {
-        if (Object.hasOwnProperty.call(itemMap, item.y.value)) itemMap[item.y.value].push(item.x.value)
+        if (Object.hasOwnProperty.call(itemMap, item.y.value))
+          itemMap[item.y.value].push(item.x.value)
         else itemMap[item.y.value] = [item.x.value]
       }
       for (const rel in itemMap) {
@@ -171,6 +238,7 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@use "sass:list"
 @import "@/app.sass"
 
 .page-body
@@ -268,9 +336,15 @@ export default {
     font-size: 14px
     margin-bottom: .5em
     color: #6F6363
+    display: flex
+    align-items: center
 
-    &:hover
+    *:hover
       cursor: pointer
+
+    i
+      margin-left: .5em
+      display: block
 
 .empty-result
   width: 50%
@@ -284,4 +358,101 @@ export default {
 
   span:hover
     @include external
+
+::v-deep(.edit-dialog)
+  .choice-section
+    text-align: left
+    padding-left: 1em
+
+    .title
+      margin-bottom: 1em
+      font-size: 1.2em
+      font-weight: 600
+
+    .el-radio-group
+      display: block
+      font-size: inherit
+      margin-left: 1em
+      margin-bottom: 1em
+
+      ::v-deep(.el-radio__label)
+        font-weight: 400
+
+    .triple-edit
+      text-align: center
+      margin-bottom: 1em
+
+      .cell
+        display: inline-block
+
+        &:not(:last-child)
+          margin-right: 1em
+
+        .type
+          color: white
+
+        input.text
+          width: 3em
+          line-height: 18px
+
+      $colors: (#1BCAE3, #E396DF, #E37D6C)
+
+      @for $i from 1 through 3
+        .cell:nth-child(#{$i})
+          .text
+            border: solid list.nth($colors, $i) 2px
+
+          .type
+            background: list.nth($colors, $i)
+
+  .other-edit-section
+    padding-left: 1em
+
+    .title
+      text-align: left
+      margin-bottom: 1em
+      font-size: 1.2em
+      font-weight: 600
+
+    .other-edit
+      &:not(:last-child)
+        border-bottom: solid #efefef 1px
+
+      .content
+        text-align: left
+        margin-top: 0.5em
+
+      .action
+        display: flex
+        justify-content: end
+        margin-bottom: 0.5em
+
+        .vote
+          display: flex
+          align-items: center
+          user-select: none
+
+          i
+            cursor: pointer
+
+          &:not(:last-child)
+            margin-right: 0.5em
+
+  .action-section
+    display: flex
+    justify-content: end
+    padding-top: 1.5em
+
+    :not(:last-child)
+      margin-right: 1em
+
+    .discard-action
+      @include button
+      background: $cancel
+      padding: .3em 1em
+
+    .submit-action
+      @include button
+      background: $primary
+      padding: .3em 1em
 </style>
