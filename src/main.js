@@ -6,11 +6,20 @@ import store from './store'
 // eslint-disable-next-line no-unused-vars
 import installElementPlus from './plugins/element.js'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import './assets/css/global.css'
 
 if (process.env.NODE_ENV === 'dev') require('./mock')
 
+library.add(faThumbsUp)
+library.add(faThumbsDown)
+
 const app = createApp(App)
+
+app.component('font-awesome-icon', FontAwesomeIcon)
 
 installElementPlus(app)
 app

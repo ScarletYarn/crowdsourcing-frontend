@@ -4,14 +4,19 @@
       style="position: absolute; top: -500px;"
       id="copy-element"
     ></textarea>
-    <el-dialog v-model="editDialog" custom-class="edit-dialog" width='30%' title="常识修订">
+    <el-dialog
+      v-model="editDialog"
+      custom-class="edit-dialog"
+      width="30%"
+      title="常识修订"
+    >
       <div class="choice-section">
         <div class="title">您认为这条常识？</div>
-        <el-radio-group v-model="wrongType">
-          <el-radio :label="3">知识表述错误</el-radio>
-          <el-radio :label="6">知识表述正确但不是常识</el-radio>
+        <el-radio-group v-model="wrongType" :disabled="submitted">
+          <el-radio :label="1">知识表述错误</el-radio>
+          <el-radio :label="2">知识表述正确但不是常识</el-radio>
         </el-radio-group>
-        <div class="triple-edit">
+        <div class="triple-edit" v-if="wrongType === 1">
           <div class="cell">
             <div class="text">狮子</div>
             <div class="type">头实体</div>
@@ -21,43 +26,30 @@
             <div class="type">关系</div>
           </div>
           <div class="cell">
-            <input class="text" />
+            <input class="text" :disabled="submitted" />
             <div class="type">尾实体</div>
           </div>
         </div>
       </div>
-      <div class="other-edit-section">
-        <div class="title">其他用户修订：</div>
-        <div class="other-edit">
-          <div class="content">知识表述正确但不是常识</div>
-          <div class="action">
-            <div class="vote">
-              <i class="el-icon-caret-top"></i>
-              <div class="count">1</div>
-            </div>
-            <div class="vote">
-              <i class="el-icon-caret-bottom"></i>
-              <div class="count">12</div>
-            </div>
-          </div>
-        </div>
-        <div class="other-edit">
-          <div class="content">草->肉</div>
-          <div class="action">
-            <div class="vote">
-              <i class="el-icon-caret-top"></i>
-              <div class="count">1</div>
-            </div>
-            <div class="vote">
-              <i class="el-icon-caret-bottom"></i>
-              <div class="count">12</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="action-section">
+      <div class="action-section" v-if="!submitted">
         <div class="discard-action" @click="editDialog = false">放弃</div>
-        <div class="submit-action">提交</div>
+        <div class="submit-action" @click="submit">提交</div>
+      </div>
+      <div class="other-edit-section" v-if="submitted">
+        <div class="title">其他用户修订：</div>
+        <div class='other-edit' v-for='(proposal, index) in proposals' :key='index'>
+          <div class="content">{{ proposal.content }}</div>
+          <div class="action">
+            <div class="vote">
+              <font-awesome-icon class="vote-icon" icon="thumbs-up" />
+              <div class="count">{{ proposal.up }}</div>
+            </div>
+            <div class="vote">
+              <font-awesome-icon class="vote-icon" icon="thumbs-down" />
+              <div class="count">{{ proposal.down }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </el-dialog>
     <div class="header-section">
@@ -173,7 +165,20 @@ export default {
       headApiEndPoint: '',
       tailApiEndPoint: '',
       editDialog: false,
-      wrongType: null
+      wrongType: 1,
+      submitted: false,
+      proposals: [
+        {
+          content: '知识表述正确但不是常识',
+          up: 1,
+          down: 12
+        },
+        {
+          content: '草->肉',
+          up: 3,
+          down: 1
+        }
+      ]
     }
   },
   methods: {
@@ -227,6 +232,9 @@ export default {
           '...' +
           endPoint.slice(endPoint.length - 5, endPoint.length)
         )
+    },
+    submit() {
+      this.submitted = true
     }
   },
   computed: {
@@ -407,6 +415,7 @@ export default {
 
   .other-edit-section
     padding-left: 1em
+    margin-top: 1.5em
 
     .title
       text-align: left
@@ -415,8 +424,7 @@ export default {
       font-weight: 600
 
     .other-edit
-      &:not(:last-child)
-        border-bottom: solid #efefef 1px
+      border-bottom: solid #efefef 1px
 
       .content
         text-align: left
@@ -426,17 +434,21 @@ export default {
         display: flex
         justify-content: end
         margin-bottom: 0.5em
+        margin-top: 1em
 
         .vote
           display: flex
           align-items: center
           user-select: none
 
-          i
+          .count
+            margin-left: 0.5em
+
+          .vote-icon
             cursor: pointer
 
           &:not(:last-child)
-            margin-right: 0.5em
+            margin-right: 1.5em
 
   .action-section
     display: flex
