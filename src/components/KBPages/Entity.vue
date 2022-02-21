@@ -37,15 +37,29 @@
       </div>
       <div class="other-edit-section" v-if="submitted">
         <div class="title">其他用户修订：</div>
-        <div class='other-edit' v-for='(proposal, index) in proposals' :key='index'>
+        <div
+          class="other-edit"
+          v-for="(proposal, index) in proposals"
+          :key="index"
+        >
           <div class="content">{{ proposal.content }}</div>
           <div class="action">
             <div class="vote">
-              <font-awesome-icon class="vote-icon" icon="thumbs-up" />
+              <font-awesome-icon
+                class="vote-icon"
+                icon="thumbs-up"
+                :style="proposal.user === 1 ? 'color: #F57F17' : ''"
+                @click="selectProposal(proposal, 1)"
+              />
               <div class="count">{{ proposal.up }}</div>
             </div>
             <div class="vote">
-              <font-awesome-icon class="vote-icon" icon="thumbs-down" />
+              <font-awesome-icon
+                class="vote-icon"
+                icon="thumbs-down"
+                :style="proposal.user === 2 ? 'color: #F57F17' : ''"
+                @click="selectProposal(proposal, 2)"
+              />
               <div class="count">{{ proposal.down }}</div>
             </div>
           </div>
@@ -171,12 +185,14 @@ export default {
         {
           content: '知识表述正确但不是常识',
           up: 1,
-          down: 12
+          down: 12,
+          user: 0
         },
         {
           content: '草->肉',
           up: 3,
-          down: 1
+          down: 1,
+          user: 0
         }
       ]
     }
@@ -192,6 +208,25 @@ export default {
         message: '复制成功',
         duration: 1000
       })
+    },
+    selectProposal(proposal, select) {
+      if (proposal.user === select) return
+      if (proposal.user === 0) {
+        if (select === 1) {
+          proposal.up++
+        } else {
+          proposal.down++
+        }
+      } else {
+        if (select === 1) {
+          proposal.up++
+          proposal.down--
+        } else {
+          proposal.up--
+          proposal.down++
+        }
+      }
+      proposal.user = select
     },
     parseItems(items) {
       const itemMap = {}
@@ -247,7 +282,7 @@ export default {
 
 <style scoped lang="sass">
 @use "sass:list"
-@import "@/app.sass"
+@import "src/app"
 
 .page-body
   width: 100%
@@ -432,7 +467,7 @@ export default {
 
       .action
         display: flex
-        justify-content: end
+        justify-content: flex-end
         margin-bottom: 0.5em
         margin-top: 1em
 
@@ -443,6 +478,7 @@ export default {
 
           .count
             margin-left: 0.5em
+            min-width: 2em
 
           .vote-icon
             cursor: pointer
@@ -452,7 +488,7 @@ export default {
 
   .action-section
     display: flex
-    justify-content: end
+    justify-content: flex-end
     padding-top: 1.5em
 
     :not(:last-child)

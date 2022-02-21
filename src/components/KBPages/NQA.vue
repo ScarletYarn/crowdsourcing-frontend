@@ -181,17 +181,10 @@ export default {
   margin-top: .8em
 
 .submit
-  background-color: $primary
-  color: white
+  @include button
+  background: $primary
   padding: .7em
-  display: inline-block
   margin: 1em 0
-  cursor: pointer
-  user-select: none
-  transition: .2s
-
-  &:hover
-    opacity: .7
 
 .el-select
   width: 100%
