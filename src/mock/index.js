@@ -105,6 +105,12 @@ Mock.mock(/ruleData\/q.*/, () =>
   })
 )
 
+Mock.mock(/kb\/qimg.*/, () =>
+  succeed({
+    entityImageURL: 'http://localhost:8081/images/kbimage/难受/google_0001.jpg'
+  })
+)
+
 Mock.mock(/kb\/q.*/, () => {
   return succeed(
     JSON.stringify({

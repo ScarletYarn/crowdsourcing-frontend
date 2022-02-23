@@ -251,6 +251,12 @@ export const kbSearch = q => {
   })
 }
 
+export const kbSearchImage = qimg => {
+  return service.get(`/kb/qimg`, {
+    params: { qimg }
+  })
+}
+
 export const kbQAMask = q => {
   return service.get(`/kb/qa/mask`, {
     params: { q: encodeURIComponent(q) }
