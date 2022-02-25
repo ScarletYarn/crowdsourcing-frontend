@@ -2,8 +2,8 @@
   <div class="workpanel">
     <div class="content">
       <i-time-indicator></i-time-indicator>
-      <div class='title'>请从下列知识中选出正确且属于常识的条目：</div>
-      <el-checkbox-group v-model="checkList" class='box'>
+      <div class="title">请从下列知识中选出正确且属于常识的条目：</div>
+      <el-checkbox-group v-model="checkList" class="box">
         <el-checkbox label="Pearl IsA Thing"></el-checkbox>
         <el-checkbox label="Pearl IsA ChemicalSubstance"></el-checkbox>
         <el-checkbox label="Pearl IsA ChemicalObject"></el-checkbox>
@@ -14,7 +14,7 @@
         <el-checkbox label="Repel IsA Thing"></el-checkbox>
         <el-checkbox label="Repel IsA Location"></el-checkbox>
       </el-checkbox-group>
-      <el-button class='action' type='primary'>下一组</el-button>
+      <el-button class="action" type="primary">下一组</el-button>
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
 }
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .title {
   margin: 1em;
 }
@@ -54,7 +54,7 @@ export default {
   padding-left: 3em;
 
   label {
-    margin: .3em;
+    margin: 0.3em;
   }
 }
 

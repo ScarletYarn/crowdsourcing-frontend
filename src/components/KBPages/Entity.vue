@@ -67,10 +67,9 @@
       </div>
     </el-dialog>
     <div class="header-section">
-      
-      <div class="title-container" >
-        <div class="title" >{{ entity }}</div>
-        <div class="badge" >词条</div>
+      <div class="title-container">
+        <div class="title">{{ entity }}</div>
+        <div class="badge">词条</div>
         <div class="icon">
           <i class="el-icon-s-home" @click="$router.push('/kb/home')"></i>
         </div>
@@ -89,8 +88,17 @@
             }}</span>
           </div>
         </div>
-        <div class="right" style="margin-left:50px;height:170px;margin-top:-60px;display:flex;justify-content:center;align-items:center;">
-          <img class="image" style="max-width:300px;max-height:165px;" v-if="entityImageURL != 'NA' " :src="entityImageURL" mode="aspectFit"/>
+        <div
+          class="right"
+          style="margin-left:50px;height:170px;margin-top:-60px;display:flex;justify-content:center;align-items:center;"
+        >
+          <img
+            class="image"
+            style="max-width:300px;max-height:165px;"
+            v-if="entityImageURL != 'NA'"
+            :src="entityImageURL"
+            mode="aspectFit"
+          />
         </div>
       </div>
     </div>
@@ -167,20 +175,20 @@ import { BASE_URL, kbSearch, kbSearchImage } from '@/service'
 export default {
   name: 'Entity',
   async mounted() {
+    let res = await kbSearchImage(this.entity)
+    if(res.data.data != 'NA')
+      this.entityImageURL = BASE_URL + '/' + res.data.data
     const headQuery = `select ?x ?y where { <${this.entity}> ?y ?x. }`
     const tailQuery = `select ?x ?y where { ?x ?y <${this.entity}>. }`
     this.headApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${headQuery}`)
     this.tailApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${tailQuery}`)
-    let res = await kbSearch(headQuery)
-    console.log(res)
+    res = await kbSearch(headQuery)
     const headItems = JSON.parse(res.data.data).results.bindings
     this.headTriples = this.parseItems(headItems)
     res = await kbSearch(tailQuery)
     const tailItems = JSON.parse(res.data.data).results.bindings
     this.tailTriples = this.parseItems(tailItems)
     this.totalItemsCount = headItems.length + tailItems.length
-    res = await kbSearchImage(this.entity)
-    this.entityImageURL = res.data.data.entityImageURL
   },
   data() {
     return {

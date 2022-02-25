@@ -19,7 +19,7 @@
       <div class="section-body section-position-right">
         <div class="section-title">
           <div class="section-title-number light-shadow">
-            <img src="@/assets/result-page-v2/accuracy.svg" alt="accuracy">
+            <img src="@/assets/result-page-v2/accuracy.svg" alt="accuracy" />
           </div>
           <div class="section-title-text">准确率</div>
         </div>
@@ -34,7 +34,7 @@
       <div class="section-body section-position-left">
         <div class="section-title">
           <div class="section-title-number light-shadow">
-            <img src="@/assets/result-page-v2/rank.svg" alt="rank">
+            <img src="@/assets/result-page-v2/rank.svg" alt="rank" />
           </div>
           <div class="section-title-text">排名</div>
         </div>
@@ -47,7 +47,7 @@
       <div class="section-body section-position-right">
         <div class="section-title">
           <div class="section-title-number light-shadow">
-            <img src="@/assets/result-page-v2/reward.svg" alt="accuracy">
+            <img src="@/assets/result-page-v2/reward.svg" alt="accuracy" />
           </div>
           <div class="section-title-text">您的酬劳</div>
         </div>
@@ -79,7 +79,7 @@
       <div class="section-body section-position-left">
         <div class="section-title">
           <div class="section-title-number light-shadow">
-            <img src="@/assets/result-page-v2/personality.svg" alt="accuracy">
+            <img src="@/assets/result-page-v2/personality.svg" alt="accuracy" />
           </div>
           <div class="section-title-text">性格与认知</div>
         </div>

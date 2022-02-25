@@ -1,6 +1,8 @@
 <template>
   <div class="available_container">
-    <div class="total">累计赚得  ¥{{ total }} + <span style="font-weight: bold">？</span></div>
+    <div class="total">
+      累计赚得 ¥{{ total }} + <span style="font-weight: bold">？</span>
+    </div>
     <el-table
       class="availableTable"
       stripe
@@ -16,10 +18,15 @@
       <el-table-column label="酬劳" width="200">
         <template #default="scope">
           <span>¥{{ scope.row.value }} + </span>
-          <el-tooltip class="item" effect="dark" content="奖金数额需根据用户平均准确率计算所得，请您之后查看" placement="top-start">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="奖金数额需根据用户平均准确率计算所得，请您之后查看"
+            placement="top-start"
+          >
             <span style="font-weight: bold">？</span>
-<!--            <img src="../assets/问号1.png" alt="" width="20">-->
-<!--            <span><i class="el-icon-question"></i></span>-->
+            <!--            <img src="../assets/问号1.png" alt="" width="20">-->
+            <!--            <span><i class="el-icon-question"></i></span>-->
           </el-tooltip>
         </template>
       </el-table-column>
@@ -59,11 +66,11 @@ export default {
       // this.handleFormat()
       // console.log(this.tableData)
     },
-    handleFormat(){
-      for(var i in this.tableData){
+    handleFormat() {
+      for (var i in this.tableData) {
         var data = this.tableData[i]
-        data.completeTime = data.completeTime.slice(0,10)
-        data.value = (parseFloat(data.value)/100).toFixed(2)
+        data.completeTime = data.completeTime.slice(0, 10)
+        data.value = (parseFloat(data.value) / 100).toFixed(2)
       }
     }
   }

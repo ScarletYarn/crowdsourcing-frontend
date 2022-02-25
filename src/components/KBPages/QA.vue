@@ -3,7 +3,11 @@
     <div class="page-title">Commonsense Question Answering</div>
     <div class="example-input">
       <div class="label">Example inputs</div>
-      <el-select v-model="example" @change="onExampleSelected" placeholder="Select an example query">
+      <el-select
+        v-model="example"
+        @change="onExampleSelected"
+        placeholder="Select an example query"
+      >
         <el-option
           v-for="item in examples"
           :key="item"

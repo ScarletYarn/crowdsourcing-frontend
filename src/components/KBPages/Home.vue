@@ -8,7 +8,7 @@
         @keyup.enter="q()"
       >
       </el-input>
-      <div class="hint">例：人工智能、大学</div>
+      <div class="hint">例：狮子、电脑、苹果</div>
     </div>
   </div>
 </template>
