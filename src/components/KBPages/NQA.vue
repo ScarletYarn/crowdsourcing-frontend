@@ -26,11 +26,11 @@
         <el-tabs v-model="activeSource">
           <el-tab-pane label="KBs" name="first">
             <div class="source-tab">
-              <el-radio-group v-model="kb">
-                <el-radio label="mask">None</el-radio>
-                <el-radio label="span">CSKG</el-radio>
-                <el-radio label="mask-word">V2C</el-radio>
-              </el-radio-group>
+              <el-checkbox-group v-model="kb">
+                <el-checkbox label="mask">None</el-checkbox>
+                <el-checkbox label="span">CSKG</el-checkbox>
+                <el-checkbox label="mask-word">V2C</el-checkbox>
+              </el-checkbox-group>
             </div>
           </el-tab-pane>
           <el-tab-pane label="Text" name="second">
@@ -96,6 +96,8 @@
 </template>
 
 <script>
+import { kbQAMask } from '@/service'
+
 export default {
   name: 'NQA',
   mounted() {
@@ -107,8 +109,7 @@ export default {
       examplesForMask: [
         'Lions like to eat [MASK].',
         'Elephants like to eat [MASK].',
-        'Dogs like to eat [MASK].',
-        '狮子最喜欢吃[MASK][MASK][MASK]。'
+        'Dogs like to eat [MASK].'
       ],
       examplesForSpan: ['where do lions live ?', '大象喜欢吃什么？'],
       examplesForMaskWord: ['熊猫喜欢吃[MASK]'],
@@ -119,7 +120,7 @@ export default {
       noResult: false,
       loading: false,
       activeSource: 'first',
-      kb: null,
+      kb: [],
       textSource: null,
       videoSrc: null
     }
@@ -127,26 +128,11 @@ export default {
   methods: {
     async search() {
       this.loading = true
-      await new Promise(resolve => {
-        setTimeout(() => {
-          this.qaResult = [
-            {
-              source: 'Source A',
-              answers: ['Hair', 'Leg', 'Back'],
-              context: 'Kotlin is better that Java.'
-            },
-            {
-              source: 'Source B',
-              answers: ['Hair', 'Leg', 'Back'],
-              context: 'Kotlin is better that Java.'
-            }
-          ]
-          this.noResult = this.qaResult.length === 0
-          this.showOutput = true
-          this.loading = false
-          resolve()
-        }, 2000)
-      })
+      let res = await kbQAMask(this.query)
+      this.qaResult = res.data.data
+      this.noResult = this.qaResult.length === 0
+      this.showOutput = true
+      this.loading = false
     },
     onExampleSelected(e) {
       this.query = e

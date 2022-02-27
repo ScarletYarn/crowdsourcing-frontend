@@ -105,6 +105,21 @@ Mock.mock(/ruleData\/q.*/, () =>
   })
 )
 
+Mock.mock(/kb\/qa\/mask.*/, () =>
+  succeed([
+    {
+      source: 'Source A',
+      answers: ['Hair', 'Leg', 'Back'],
+      context: 'Kotlin is better that Java.'
+    },
+    {
+      source: 'Source B',
+      answers: ['Hair', 'Leg', 'Back'],
+      context: 'Kotlin is better that Java.'
+    }
+  ])
+)
+
 Mock.mock(/kb\/q.*/, () => {
   return succeed(
     JSON.stringify({
