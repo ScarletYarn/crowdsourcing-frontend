@@ -2,7 +2,9 @@
   <el-container>
     <el-header>
       <div>
-        <a href="/availablejobs" style="display: block; height: 100px"><img src="../assets/12345.png" alt="" /></a>
+        <a href="/availablejobs" style="display: block; height: 100px"
+          ><img src="../assets/12345.png" alt=""
+        /></a>
         <span>知识众包系统</span>
       </div>
       <el-button type="info" @click="logout">退出</el-button>
@@ -14,7 +16,7 @@
 </template>
 
 <script>
-import {logout} from "@/service";
+import { logout } from '@/service'
 
 export default {
   name: 'WorkPanel',
@@ -23,7 +25,7 @@ export default {
       await logout()
       this.$store.commit('logout')
       await this.$router.replace('/login')
-    },
+    }
   }
 }
 </script>

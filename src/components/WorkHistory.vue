@@ -4,12 +4,12 @@
 
 <script>
 export default {
-name: "WorkHistory"
+  name: 'WorkHistory'
 }
 </script>
 
 <style scoped>
-.history_container{
+.history_container {
   padding-top: 20px;
 }
 </style>

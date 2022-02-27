@@ -120,6 +120,8 @@ Mock.mock(/kb\/qa\/mask.*/, () =>
   ])
 )
 
+Mock.mock(/kb\/qimg.*/, () => succeed('images/kbImage/难受/google_0001.jpg'))
+
 Mock.mock(/kb\/q.*/, () => {
   return succeed(
     JSON.stringify({

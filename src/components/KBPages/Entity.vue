@@ -74,16 +74,32 @@
           <i class="el-icon-s-home" @click="$router.push('/kb/home')"></i>
         </div>
       </div>
-      <div class="relative">共检索到{{ totalItemsCount }}个相关词条</div>
-      <div class="link">
-        API(头实体)：<span @click="copyText(headApiEndPoint)">{{
-          apiPretty(headApiEndPoint)
-        }}</span>
-      </div>
-      <div class="link">
-        API(尾实体)：<span @click="copyText(tailApiEndPoint)">{{
-          apiPretty(tailApiEndPoint)
-        }}</span>
+      <div class="head-control" style="display:flex;height:120px;">
+        <div class="left" style="max-width:60%;">
+          <div class="relative">共检索到{{ totalItemsCount }}个相关词条</div>
+          <div class="link">
+            API(头实体)：<span @click="copyText(headApiEndPoint)">{{
+              apiPretty(headApiEndPoint)
+            }}</span>
+          </div>
+          <div class="link">
+            API(尾实体)：<span @click="copyText(tailApiEndPoint)">{{
+              apiPretty(tailApiEndPoint)
+            }}</span>
+          </div>
+        </div>
+        <div
+          class="right"
+          style="margin-left:50px;height:170px;margin-top:-60px;display:flex;justify-content:center;align-items:center;"
+        >
+          <img
+            class="image"
+            style="max-width:300px;max-height:165px;"
+            v-if="entityImageURL != 'NA'"
+            :src="entityImageURL"
+            mode="aspectFit"
+          />
+        </div>
       </div>
     </div>
     <div class="body-section">
@@ -154,16 +170,19 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { BASE_URL, kbSearch } from '@/service'
+import { BASE_URL, kbSearch, kbSearchImage } from '@/service'
 
 export default {
   name: 'Entity',
   async mounted() {
+    let res = await kbSearchImage(this.entity)
+    if(res.data.data != 'NA')
+      this.entityImageURL = BASE_URL + '/' + res.data.data
     const headQuery = `select ?x ?y where { <${this.entity}> ?y ?x. }`
     const tailQuery = `select ?x ?y where { ?x ?y <${this.entity}>. }`
     this.headApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${headQuery}`)
     this.tailApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${tailQuery}`)
-    let res = await kbSearch(headQuery)
+    res = await kbSearch(headQuery)
     const headItems = JSON.parse(res.data.data).results.bindings
     this.headTriples = this.parseItems(headItems)
     res = await kbSearch(tailQuery)
@@ -173,6 +192,7 @@ export default {
   },
   data() {
     return {
+      entityImageURL: 'NA',
       headTriples: [],
       tailTriples: [],
       totalItemsCount: 0,

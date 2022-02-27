@@ -19,23 +19,23 @@
 </template>
 
 <script>
-import {update, getme} from "@/service";
-import {ElMessageBox} from "element-plus";
+import { update, getme } from '@/service'
+import { ElMessageBox } from 'element-plus'
 
 export default {
-  name: "InfoEdit",
-  data(){
-    return{
-      userMe:{
-        username:'sxw',
-        mobile:"12341"
+  name: 'InfoEdit',
+  data() {
+    return {
+      userMe: {
+        username: 'sxw',
+        mobile: '12341'
       }
     }
   },
-  created(){
+  created() {
     this.getUserMe()
   },
-  methods:{
+  methods: {
     async getUserMe() {
       const res = await getme()
       console.log(res)
@@ -43,7 +43,7 @@ export default {
       this.userMe.mobile = res.data.data.phone
       // if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
     },
-    async update(){
+    async update() {
       const res = await update(this.userMe.username, this.userMe.mobile)
       console.log(res)
       if (!res.data.data) return this.$message.error(res.data.msg)
@@ -57,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-.infoedit_container{
+.infoedit_container {
   width: 400px;
   height: 100%;
   margin: 0 80px;
