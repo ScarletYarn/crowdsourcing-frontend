@@ -1,4 +1,4 @@
-# crowdsourcing-frontend
+# Crowdsourcing Frontend
 
 ## Project setup
 ```
@@ -23,7 +23,23 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Trivia
+## Deployment
+
+Make sure to add your ssh public key to the server.
+
+```shell
+bash deploy.sh
+```
+
+This script will:
+
+1. Kill the currently running backend
+2. Clear all the static web files
+3. Copy all the files from `~/cs-platform/static-temp` to `~/cs-platfom/static`
+4. Send all the files from `./dist` to `~/cs-platfom/static`
+5. Restart the backend
+
+## Trivia
 
 - Using hasOwnProperty from Object
 
@@ -141,7 +157,7 @@ export default {
 </script>
 ```
 
-### Bugs
+## Bugs
 
 - `el-radio` click event triggered twice
 

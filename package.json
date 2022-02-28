@@ -15,8 +15,11 @@
     "chart.js": "^3.3.2",
     "core-js": "^3.6.5",
     "element-plus": "^1.0.1-alpha.19",
+    "js-md5": "^0.7.3",
     "request-promise": "^4.2.6",
     "vue": "^3.0.0",
+    "vue-jsonp": "^2.0.0",
+    "vue-resource": "^1.5.3",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
