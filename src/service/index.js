@@ -245,9 +245,9 @@ export const groupCommentComplete = (jobId, prevIndex) => {
   })
 }
 
-export const kbSearch = q => {
+export const kbSearch = (subject, object) => {
   return service.get(`/kb/q`, {
-    params: { q }
+    params: { subject, object }
   })
 }
 
@@ -327,58 +327,9 @@ export const getCoinInfo = () => {
 }
 
 export const infoExtraction = q => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        data: [
-          [
-            {
-              type: 'tag',
-              label: 'A0',
-              text: '美国'
-            },
-            {
-              type: 'tag',
-              label: 'P',
-              text: '总统'
-            },
-            {
-              type: 'tag',
-              label: 'A1',
-              text: '奥巴马'
-            },
-            {
-              type: 'plain',
-              text: '将访问中国'
-            }
-          ],
-          [
-            {
-              type: 'plain',
-              text: '美国总统'
-            },
-            {
-              type: 'tag',
-              label: 'A0',
-              text: '奥巴马'
-            },
-            {
-              type: 'plain',
-              text: '将'
-            },
-            {
-              type: 'tag',
-              label: 'P',
-              text: '访问'
-            },
-            {
-              type: 'tag',
-              label: 'A1',
-              text: '中国'
-            }
-          ]
-        ]
-      })
-    }, 1000)
+  return service.get(`/oie/extract`, {
+    params: {
+      q
+    }
   })
 }

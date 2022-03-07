@@ -105,18 +105,18 @@
     <div class="body-section">
       <div class="body-title">【{{ entity }}】作为头实体</div>
       <div class="item-area">
-        <div class="empty-result" v-if="headTriples.length === 0">
+        <div class="empty-result" v-if="Object.keys(headTriples).length === 0">
           无搜索结果
         </div>
         <div
           class="relation-cell"
-          v-for="(item, index) in headTriples"
+          v-for="(item, index) in Object.keys(headTriples)"
           :key="index"
         >
-          <div class="relation">{{ item.rel }}</div>
+          <div class="relation">{{ item }}</div>
           <div
             class="item"
-            v-for="(subItem, subIndex) in item.tails"
+            v-for="(subItem, subIndex) in headTriples[item]"
             :key="subIndex"
           >
             <div
@@ -128,26 +128,26 @@
             </div>
             <i class="el-icon-edit" @click="editDialog = true"></i>
           </div>
-          <div class="more-link" v-if="item.hasMore">
-            <span @click="toMore(entity, item.rel, 'head')">More >></span>
+          <div class="more-link" v-if="headTriples[item].hasMore">
+            <span @click="toMore(entity, item, 'head')">More >></span>
           </div>
         </div>
       </div>
       <div class="divide-line"></div>
       <div class="body-title">【{{ entity }}】作为尾实体</div>
       <div class="item-area">
-        <div class="empty-result" v-if="tailTriples.length === 0">
+        <div class="empty-result" v-if="Object.keys(tailTriples).length === 0">
           无搜索结果
         </div>
         <div
           class="relation-cell"
-          v-for="(item, index) in tailTriples"
+          v-for="(item, index) in Object.keys(tailTriples)"
           :key="index"
         >
-          <div class="relation">{{ item.rel }}</div>
+          <div class="relation">{{ item }}</div>
           <div
             class="item"
-            v-for="(subItem, subIndex) in item.tails"
+            v-for="(subItem, subIndex) in tailTriples[item]"
             :key="subIndex"
           >
             <div
@@ -159,8 +159,8 @@
             </div>
             <i class="el-icon-edit" @click="editDialog = true"></i>
           </div>
-          <div class="more-link" v-if="item.hasMore">
-            <span @click="toMore(entity, item.rel, 'tail')">More >></span>
+          <div class="more-link" v-if="tailTriples[item]">
+            <span @click="toMore(entity, item, 'tail')">More >></span>
           </div>
         </div>
       </div>
@@ -178,17 +178,13 @@ export default {
     let res = await kbSearchImage(this.entity)
     if(res.data.data != 'NA')
       this.entityImageURL = BASE_URL + '/' + res.data.data
-    const headQuery = `select ?x ?y where { <${this.entity}> ?y ?x. }`
-    const tailQuery = `select ?x ?y where { ?x ?y <${this.entity}>. }`
-    this.headApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${headQuery}`)
-    this.tailApiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${tailQuery}`)
-    res = await kbSearch(headQuery)
-    const headItems = JSON.parse(res.data.data).results.bindings
-    this.headTriples = this.parseItems(headItems)
-    res = await kbSearch(tailQuery)
-    const tailItems = JSON.parse(res.data.data).results.bindings
-    this.tailTriples = this.parseItems(tailItems)
-    this.totalItemsCount = headItems.length + tailItems.length
+    this.headApiEndPoint = encodeURI(`${BASE_URL}/kb/q?subject=${this.entity}`)
+    this.tailApiEndPoint = encodeURI(`${BASE_URL}/kb/q?object=${this.entity}`)
+    const headResp = await kbSearch(this.entity)
+    this.headTriples = this.parseItems(headResp.data.data, 'object')
+    const tailResp = await kbSearch(null, this.entity)
+    this.tailTriples = this.parseItems(tailResp.data.data, 'subject')
+    this.totalItemsCount = headResp.data.data.length + tailResp.data.data.length
   },
   data() {
     return {
@@ -248,26 +244,17 @@ export default {
       }
       proposal.user = select
     },
-    parseItems(items) {
-      const itemMap = {}
-      const parsedItems = []
-      for (const item of items) {
-        if (Object.hasOwnProperty.call(itemMap, item.y.value))
-          itemMap[item.y.value].push(item.x.value)
-        else itemMap[item.y.value] = [item.x.value]
-      }
-      for (const rel in itemMap) {
-        if (itemMap[rel].length > 4) {
-          itemMap[rel] = itemMap[rel].slice(0, 4)
-          itemMap[rel].hasMore = true
+    parseItems(items, pos) {
+      const res = {}
+      items.map(item => {
+        if (!Object.hasOwnProperty.call(res, item.relation)) {
+          res[item.relation] = []
         }
-        parsedItems.push({
-          rel,
-          tails: itemMap[rel],
-          hasMore: itemMap[rel].hasMore
-        })
-      }
-      return parsedItems
+        if (res[item.relation].length <= 4) res[item.relation].push(item[pos])
+        else res[item.relation].hasMore = true
+      })
+
+      return res
     },
     toMore(head, rel, position) {
       this.$router.push({

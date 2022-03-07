@@ -152,7 +152,7 @@ export default {
     async search() {
       this.loading = true
       const res = await infoExtraction(this.query)
-      res.data.map(seq => {
+      res.data.data.map(seq => {
         let tagIndex = 0
         seq.editDialog = false
         seq.textBody = ''
@@ -169,8 +169,7 @@ export default {
           }
         })
       })
-      this.qaResult = res.data
-      console.log(res.data)
+      this.qaResult = res.data.data
       this.noResult = this.qaResult.length === 0
       this.showOutput = true
       this.loading = false

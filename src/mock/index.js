@@ -12,11 +12,11 @@ const succeed = data => {
   }
 }
 
-Mock.mock(/login.*/, true)
-Mock.mock(/user\/signup.*/, () => universalSuccess)
-Mock.mock(/logout.*/, () => universalSuccess)
+Mock.mock(/login(\?.*)?$/, true)
+Mock.mock(/user\/signup(\?.*)?$/, () => universalSuccess)
+Mock.mock(/logout(\?.*)?$/, () => universalSuccess)
 
-Mock.mock(/job\/all.*/, () =>
+Mock.mock(/job\/all(\?.*)?$/, () =>
   succeed([
     {
       seq: '10086',
@@ -35,7 +35,7 @@ Mock.mock(/job\/all.*/, () =>
   ])
 )
 
-Mock.mock(/job\/q.*/, () =>
+Mock.mock(/job\/q(\?.*)?$/, () =>
   succeed({
     seq: '10010',
     name: '新规则正误判定',
@@ -45,7 +45,7 @@ Mock.mock(/job\/q.*/, () =>
   })
 )
 
-Mock.mock(/reward\/me.*/, () =>
+Mock.mock(/reward\/me(\?.*)?$/, () =>
   succeed([
     {
       id: '1233',
@@ -66,7 +66,7 @@ Mock.mock(/reward\/me.*/, () =>
   ])
 )
 
-Mock.mock(/reward\/rank.*/, () =>
+Mock.mock(/reward\/rank(\?.*)?$/, () =>
   succeed([
     {
       reward: '35.00',
@@ -88,11 +88,11 @@ Mock.mock(/reward\/rank.*/, () =>
   ])
 )
 
-Mock.mock(/questionnaire\/p.*/, () => universalSuccess)
+Mock.mock(/questionnaire\/p(\?.*)?$/, () => universalSuccess)
 
-Mock.mock(/ruleData\/byJobId.*/, () => succeed(['12', '23']))
+Mock.mock(/ruleData\/byJobId(\?.*)?$/, () => succeed(['12', '23']))
 
-Mock.mock(/ruleData\/q.*/, () =>
+Mock.mock(/ruleData\/q(\?.*)?$/, () =>
   succeed({
     id: '223333rfergefr',
     jobId: 'uvhsihisheviev',
@@ -105,7 +105,7 @@ Mock.mock(/ruleData\/q.*/, () =>
   })
 )
 
-Mock.mock(/kb\/qa\/mask.*/, () =>
+Mock.mock(/kb\/qa\/mask(\?.*)?$/, () =>
   succeed([
     {
       source: 'Source A',
@@ -120,63 +120,112 @@ Mock.mock(/kb\/qa\/mask.*/, () =>
   ])
 )
 
-Mock.mock(/kb\/qimg.*/, () => succeed('images/kbImage/难受/google_0001.jpg'))
+Mock.mock(/kb\/qimg(\?.*)?$/, () =>
+  succeed('images/kbImage/难受/google_0001.jpg')
+)
 
-Mock.mock(/kb\/q.*/, () => {
-  return succeed(
-    JSON.stringify({
-      results: {
-        bindings: [
-          {
-            x: {
-              value: '草'
-            },
-            y: {
-              value: '吃'
-            }
-          },
-          {
-            x: {
-              value: '牛奶'
-            },
-            y: {
-              value: '吃'
-            }
-          },
-          {
-            x: {
-              value: '牛'
-            },
-            y: {
-              value: '吃'
-            }
-          },
-          {
-            x: {
-              value: '草原'
-            },
-            y: {
-              value: '喜欢'
-            }
-          },
-          {
-            x: {
-              value: '肉'
-            },
-            y: {
-              value: '喜欢'
-            }
-          },
-          {
-            x: {
-              value: '捕猎'
-            },
-            y: {
-              value: '擅长'
-            }
-          }
-        ]
-      }
-    })
-  )
+Mock.mock(/kb\/q(\?.*)?$/, () => {
+  return succeed([
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '高谷镇'
+    },
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '凤来乡'
+    },
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '六狮王朝'
+    },
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '超级狮子玛丽'
+    },
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '逍遥森林舞会'
+    },
+    {
+      subject: '狮子',
+      relation: '*PartOf',
+      object: '逍遥森林舞会（游戏）'
+    },
+    {
+      subject: '狮子',
+      relation: 'RelatedTo',
+      object: '狮子（《聊斋志异》篇目）'
+    },
+    {
+      subject: '狮子',
+      relation: 'RelatedTo',
+      object: '狮子（基督教含义）'
+    },
+    {
+      subject: '狮子',
+      relation: 'RelatedTo',
+      object: '狮子（大型猫科类动物）'
+    },
+    {
+      subject: '狮子',
+      relation: 'RelatedTo',
+      object: '狮子（王泰戈画作）'
+    }
+  ])
 })
+
+Mock.mock(/oie\/extract(\?.*)?$/, () =>
+  succeed([
+    [
+      {
+        type: 'tag',
+        label: 'A0',
+        text: '美国'
+      },
+      {
+        type: 'tag',
+        label: 'P',
+        text: '总统'
+      },
+      {
+        type: 'tag',
+        label: 'A1',
+        text: '奥巴马'
+      },
+      {
+        type: 'plain',
+        text: '将访问中国'
+      }
+    ],
+    [
+      {
+        type: 'plain',
+        text: '美国总统'
+      },
+      {
+        type: 'tag',
+        label: 'A0',
+        text: '奥巴马'
+      },
+      {
+        type: 'plain',
+        text: '将'
+      },
+      {
+        type: 'tag',
+        label: 'P',
+        text: '访问'
+      },
+      {
+        type: 'tag',
+        label: 'A1',
+        text: '中国'
+      }
+    ]
+  ])
+)
