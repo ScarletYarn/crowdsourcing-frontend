@@ -129,22 +129,22 @@ Mock.mock(/kb\/q(\?.*)?$/, () => {
     {
       subject: '狮子',
       relation: '*PartOf',
-      object: '高谷镇'
+      object: 'b高谷镇'
     },
     {
       subject: '狮子',
       relation: '*PartOf',
-      object: '凤来乡'
+      object: 'a凤来乡'
     },
     {
       subject: '狮子',
       relation: '*PartOf',
-      object: '六狮王朝'
+      object: 'f六狮王朝'
     },
     {
       subject: '狮子',
       relation: '*PartOf',
-      object: '超级狮子玛丽'
+      object: 'e超级狮子玛丽'
     },
     {
       subject: '狮子',

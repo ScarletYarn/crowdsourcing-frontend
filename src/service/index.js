@@ -245,9 +245,9 @@ export const groupCommentComplete = (jobId, prevIndex) => {
   })
 }
 
-export const kbSearch = (subject, object) => {
+export const kbSearch = (subject, object, relation) => {
   return service.get(`/kb/q`, {
-    params: { subject, object }
+    params: { subject, object, relation }
   })
 }
 

@@ -159,7 +159,7 @@
             </div>
             <i class="el-icon-edit" @click="editDialog = true"></i>
           </div>
-          <div class="more-link" v-if="tailTriples[item]">
+          <div class="more-link" v-if="tailTriples[item].hasMore">
             <span @click="toMore(entity, item, 'tail')">More >></span>
           </div>
         </div>
@@ -253,6 +253,8 @@ export default {
         if (res[item.relation].length <= 4) res[item.relation].push(item[pos])
         else res[item.relation].hasMore = true
       })
+
+      Object.keys(res).map(k => res[k].sort())
 
       return res
     },

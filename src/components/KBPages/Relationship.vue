@@ -44,19 +44,29 @@ import { ElMessage } from 'element-plus'
 export default {
   name: 'Relationship',
   async mounted() {
-    const query =
-      this.$route.params.position === 'head'
-        ? `select ?x where { <${this.entity}> <${this.rel}> ?x. }`
-        : `select ?x where { ?x <${this.rel}> <${this.entity}>. }`
-    this.apiEndPoint = encodeURI(`${BASE_URL}/kb/q?q=${query}`)
-    const res = await kbSearch(query)
-    for (const item of JSON.parse(res.data.data).results.bindings) {
+    let subject = null,
+      object = null
+    if (this.$route.params.position === 'head') {
+      subject = this.entity
+      this.apiEndPoint = encodeURI(
+        `${BASE_URL}/kb/q?subject=${subject}&relation${this.rel}`
+      )
+    } else {
+      object = this.entity
+      this.apiEndPoint = encodeURI(
+        `${BASE_URL}/kb/q?object=${object}&relation${this.rel}`
+      )
+    }
+
+    const res = await kbSearch(subject, object, this.rel)
+    const resEntity = res.data.data
+      .map(e => (subject === null ? e.subject : e.object))
+      .sort()
+    for (const item of resEntity) {
       this.items.push({
-        head:
-          this.$route.params.position === 'head' ? this.entity : item.x.value,
+        head: subject === null ? item : subject,
         rel: this.rel,
-        tail:
-          this.$route.params.position === 'head' ? item.x.value : this.entity
+        tail: object === null ? item : object
       })
     }
   },
