@@ -326,10 +326,18 @@ export const getCoinInfo = () => {
   return service.get(`/coinInfo/get`)
 }
 
-export const infoExtraction = q => {
-  return service.get(`/oie/extract`, {
+export const infoExtraction = query => {
+  return service.get(`/kb/extraction`, {
     params: {
-      q
+      query
+    }
+  })
+}
+
+export const similarBm25 = query => {
+  return service.get(`/kb/similar/bm25`, {
+    params: {
+      query
     }
   })
 }

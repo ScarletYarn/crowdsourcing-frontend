@@ -107,13 +107,13 @@
 </template>
 
 <script>
-import { infoExtraction } from '@/service'
+import { infoExtraction, similarBm25 } from '@/service'
 
 export default {
   name: 'OIE',
   data() {
     return {
-      examples: ['美国总统奥巴马将访问中国。'],
+      examples: ['狮是一种生存在非洲和亚洲的大型猫科动物。'],
       example: null,
       query: '',
       showOutput: false,
@@ -151,8 +151,31 @@ export default {
   methods: {
     async search() {
       this.loading = true
-      const res = await infoExtraction(this.query)
-      res.data.data.map(seq => {
+      const res = []
+      const extraction = (await infoExtraction(this.query)).data.data
+      for (const item of extraction) {
+        const query = item.values[1] + item.values[0] + item.values[2]
+        res.push([
+          {
+            type: 'plain',
+            text: query
+          }
+        ])
+        // eslint-disable-next-line
+        const sim = (await similarBm25(query.replace(/[\[\]\|]/g, ''))).data
+          .data
+        sim.map(e => {
+          res.push([
+            {
+              type: 'plain',
+              text: e.subject + e.relation + e.object
+            }
+          ])
+        })
+      }
+
+      console.log(res)
+      res.map(seq => {
         let tagIndex = 0
         seq.editDialog = false
         seq.textBody = ''
@@ -169,7 +192,7 @@ export default {
           }
         })
       })
-      this.qaResult = res.data.data
+      this.qaResult = res
       this.noResult = this.qaResult.length === 0
       this.showOutput = true
       this.loading = false
