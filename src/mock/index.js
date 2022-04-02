@@ -127,51 +127,61 @@ Mock.mock(/kb\/qimg(\?.*)?$/, () =>
 Mock.mock(/kb\/q(\?.*)?$/, () => {
   return succeed([
     {
+      id: 'test-id-1',
       subject: '狮子',
       relation: '*PartOf',
       object: 'b高谷镇'
     },
     {
+      id: 'test-id-2',
       subject: '狮子',
       relation: '*PartOf',
       object: 'a凤来乡'
     },
     {
+      id: 'test-id-3',
       subject: '狮子',
       relation: '*PartOf',
       object: 'f六狮王朝'
     },
     {
+      id: 'test-id-4',
       subject: '狮子',
       relation: '*PartOf',
       object: 'e超级狮子玛丽'
     },
     {
+      id: 'test-id-5',
       subject: '狮子',
       relation: '*PartOf',
       object: '逍遥森林舞会'
     },
     {
+      id: 'test-id-6',
       subject: '狮子',
       relation: '*PartOf',
       object: '逍遥森林舞会（游戏）'
     },
     {
+      id: 'test-id-7',
       subject: '狮子',
       relation: 'RelatedTo',
       object: '狮子（《聊斋志异》篇目）'
     },
     {
+      id: 'test-id-8',
       subject: '狮子',
       relation: 'RelatedTo',
       object: '狮子（基督教含义）'
     },
     {
+      id: 'test-id-9',
       subject: '狮子',
       relation: 'RelatedTo',
       object: '狮子（大型猫科类动物）'
     },
     {
+      id: 'test-id-10',
       subject: '狮子',
       relation: 'RelatedTo',
       object: '狮子（王泰戈画作）'
@@ -229,3 +239,30 @@ Mock.mock(/oie\/extract(\?.*)?$/, () =>
     ]
   ])
 )
+
+Mock.mock(/kb\/triple\/comment(\?.*)?$/, 'get', () =>
+  succeed([
+    {
+      id: 'test-example-id',
+      tripleId: 'test-triple-id',
+      type: 'TAIL',
+      data: '无敌尾实体',
+      upvote: 2,
+      downvote: 3
+    },
+    {
+      id: 'test-example-id',
+      tripleId: 'test-triple-id',
+      type: 'WRONG',
+      data: null,
+      upvote: 5,
+      downvote: 1
+    }
+  ])
+)
+
+Mock.mock(/kb\/triple\/comment(\?.*)?$/, 'put', () => succeed(true))
+
+Mock.mock(/kb\/triple\/comment\/up(\?.*)?$/, () => succeed(true))
+
+Mock.mock(/kb\/triple\/comment\/down(\?.*)?$/, () => succeed(true))

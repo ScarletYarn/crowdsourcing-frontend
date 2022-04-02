@@ -204,3 +204,7 @@ First register the components. Refer [here](https://www.chartjs.org/docs/latest/
   <router-view :key="$route.path" />
 </template>
 ```
+
+- `click` event triggered more than once on `font-awesome-icon` component
+
+Register the handler on parent component.

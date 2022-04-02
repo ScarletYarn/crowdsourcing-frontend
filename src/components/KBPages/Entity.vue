@@ -18,15 +18,15 @@
         </el-radio-group>
         <div class="triple-edit" v-if="wrongType === 1">
           <div class="cell">
-            <div class="text">狮子</div>
+            <div class="text">{{ activeTriple.subject }}</div>
             <div class="type">头实体</div>
           </div>
           <div class="cell">
-            <div class="text">喜欢</div>
+            <div class="text">{{ activeTriple.relation }}</div>
             <div class="type">关系</div>
           </div>
           <div class="cell">
-            <input class="text" :disabled="submitted" />
+            <input class="text" v-model="tailEdit" :disabled="submitted" />
             <div class="type">尾实体</div>
           </div>
         </div>
@@ -42,25 +42,29 @@
           v-for="(proposal, index) in proposals"
           :key="index"
         >
-          <div class="content">{{ proposal.content }}</div>
+          <div class="content">
+            {{
+              proposal.type === 'WRONG'
+                ? '知识表述正确但不是常识'
+                : activeTriple.object + '->' + proposal.data
+            }}
+          </div>
           <div class="action">
-            <div class="vote">
+            <div class="vote" @click="selectProposal(proposal, 1)">
               <font-awesome-icon
                 class="vote-icon"
                 icon="thumbs-up"
                 :style="proposal.user === 1 ? 'color: #F57F17' : ''"
-                @click="selectProposal(proposal, 1)"
               />
-              <div class="count">{{ proposal.up }}</div>
+              <div class="count">{{ proposal.upvote }}</div>
             </div>
-            <div class="vote">
+            <div class="vote" @click="selectProposal(proposal, 2)">
               <font-awesome-icon
                 class="vote-icon"
                 icon="thumbs-down"
                 :style="proposal.user === 2 ? 'color: #F57F17' : ''"
-                @click="selectProposal(proposal, 2)"
               />
-              <div class="count">{{ proposal.down }}</div>
+              <div class="count">{{ proposal.downvote }}</div>
             </div>
           </div>
         </div>
@@ -121,12 +125,18 @@
           >
             <div
               @click="
-                $router.push({ name: 'entity', params: { entity: subItem } })
+                $router.push({
+                  name: 'entity',
+                  params: { entity: subItem.value }
+                })
               "
             >
-              {{ subItem }}
+              {{ subItem.value }}
             </div>
-            <i class="el-icon-edit" @click="editDialog = true"></i>
+            <i
+              class="el-icon-edit"
+              @click="openEdit(subItem.id, entity, item, subItem.value)"
+            ></i>
           </div>
           <div class="more-link" v-if="headTriples[item].hasMore">
             <span @click="toMore(entity, item, 'head')">More >></span>
@@ -152,12 +162,18 @@
           >
             <div
               @click="
-                $router.push({ name: 'entity', params: { entity: subItem } })
+                $router.push({
+                  name: 'entity',
+                  params: { entity: subItem.value }
+                })
               "
             >
-              {{ subItem }}
+              {{ subItem.value }}
             </div>
-            <i class="el-icon-edit" @click="editDialog = true"></i>
+            <i
+              class="el-icon-edit"
+              @click="openEdit(subItem.id, subItem.value, item, entity)"
+            ></i>
           </div>
           <div class="more-link" v-if="tailTriples[item].hasMore">
             <span @click="toMore(entity, item, 'tail')">More >></span>
@@ -170,13 +186,21 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { BASE_URL, kbSearch, kbSearchImage } from '@/service'
+import {
+  BASE_URL,
+  kbSearch,
+  kbSearchImage,
+  getAllTripleComment,
+  postTripleComment,
+  tripleCommentUpvote,
+  tripleCommentDownvote
+} from '@/service'
 
 export default {
   name: 'Entity',
   async mounted() {
     let res = await kbSearchImage(this.entity)
-    if(res.data.data != 'NA')
+    if (res.data.data != 'NA')
       this.entityImageURL = BASE_URL + '/' + res.data.data
     this.headApiEndPoint = encodeURI(`${BASE_URL}/kb/q?subject=${this.entity}`)
     this.tailApiEndPoint = encodeURI(`${BASE_URL}/kb/q?object=${this.entity}`)
@@ -197,20 +221,9 @@ export default {
       editDialog: false,
       wrongType: 1,
       submitted: false,
-      proposals: [
-        {
-          content: '知识表述正确但不是常识',
-          up: 1,
-          down: 12,
-          user: 0
-        },
-        {
-          content: '草->肉',
-          up: 3,
-          down: 1,
-          user: 0
-        }
-      ]
+      proposals: [],
+      tailEdit: null,
+      activeTriple: null
     }
   },
   methods: {
@@ -225,22 +238,14 @@ export default {
         duration: 1000
       })
     },
-    selectProposal(proposal, select) {
-      if (proposal.user === select) return
-      if (proposal.user === 0) {
-        if (select === 1) {
-          proposal.up++
-        } else {
-          proposal.down++
-        }
+    async selectProposal(proposal, select) {
+      if (proposal.user) return
+      if (select === 1) {
+        await tripleCommentUpvote(proposal.id)
+        proposal.upvote++
       } else {
-        if (select === 1) {
-          proposal.up++
-          proposal.down--
-        } else {
-          proposal.up--
-          proposal.down++
-        }
+        await tripleCommentDownvote(proposal.id)
+        proposal.downvote++
       }
       proposal.user = select
     },
@@ -250,7 +255,11 @@ export default {
         if (!Object.hasOwnProperty.call(res, item.relation)) {
           res[item.relation] = []
         }
-        if (res[item.relation].length <= 4) res[item.relation].push(item[pos])
+        if (res[item.relation].length <= 4)
+          res[item.relation].push({
+            value: item[pos],
+            id: item.id
+          })
         else res[item.relation].hasMore = true
       })
 
@@ -277,13 +286,36 @@ export default {
           endPoint.slice(endPoint.length - 5, endPoint.length)
         )
     },
-    submit() {
+    async submit() {
+      await postTripleComment(
+        this.activeTriple.id,
+        this.wrongType === 1 ? 'TAIL' : 'WRONG',
+        this.tailEdit
+      )
+      const allProposals = await getAllTripleComment(this.activeTriple.id)
+      this.proposals = allProposals.data.data
       this.submitted = true
+    },
+    openEdit(id, subject, relation, object) {
+      this.editDialog = true
+      this.activeTriple = {
+        id,
+        subject,
+        relation,
+        object
+      }
     }
   },
   computed: {
     entity() {
       return this.$route.params.entity
+    }
+  },
+  watch: {
+    editDialog() {
+      this.submitted = false
+      this.proposals = []
+      this.tailEdit = null
     }
   }
 }
@@ -484,6 +516,7 @@ export default {
           display: flex
           align-items: center
           user-select: none
+          cursor: pointer
 
           .count
             margin-left: 0.5em

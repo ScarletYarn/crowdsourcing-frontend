@@ -341,3 +341,31 @@ export const similarBm25 = query => {
     }
   })
 }
+
+export const getAllTripleComment = tripleId => {
+  return service.get(`/kb/triple/comment`, {
+    params: {
+      tripleId
+    }
+  })
+}
+
+export const postTripleComment = (tripleId, type, data) => {
+  return service.put(`/kb/triple/comment`, {
+    tripleId,
+    type,
+    data
+  })
+}
+
+export const tripleCommentUpvote = id => {
+  return service.post(`/kb/triple/comment/up`, {
+    id
+  })
+}
+
+export const tripleCommentDownvote = id => {
+  return service.post(`/kb/triple/comment/down`, {
+    id
+  })
+}
