@@ -55,6 +55,7 @@
               </div>
               <div v-else>OOPS!</div>
             </div>
+            <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
           <div class="action-area">
             <div class="category">
@@ -107,7 +108,7 @@
 </template>
 
 <script>
-import { infoExtraction, similarBm25 } from '@/service'
+import { infoExtraction, similarBm25, similarKnn } from '@/service'
 
 export default {
   name: 'OIE',
@@ -149,32 +150,47 @@ export default {
     }
   },
   methods: {
+    wrapSeq(subject, relation, object, source) {
+      const res = [
+        {
+          type: 'tag',
+          label: '头实体',
+          text: subject
+        },
+        {
+          type: 'tag',
+          label: '关系',
+          text: relation
+        },
+        {
+          type: 'tag',
+          label: '尾实体',
+          text: object
+        }
+      ]
+      if (source) res.source = source
+      return res
+    },
     async search() {
       this.loading = true
       const res = []
       const extraction = (await infoExtraction(this.query)).data.data
       for (const item of extraction) {
         const query = item.values[1] + item.values[0] + item.values[2]
-        res.push([
-          {
-            type: 'plain',
-            text: query
-          }
-        ])
+        res.push(this.wrapSeq(item.values[1], item.values[0], item.values[2]))
         // eslint-disable-next-line
         const sim = (await similarBm25(query.replace(/[\[\]\|]/g, ''))).data
           .data
         sim.map(e => {
-          res.push([
-            {
-              type: 'plain',
-              text: e.subject + e.relation + e.object
-            }
-          ])
+          res.push(this.wrapSeq(e.subject, e.relation, e.object, 'BM25'))
+        })
+
+        const knn = (await similarKnn(item.vector.toString())).data.data
+        knn.map(e => {
+          res.push(this.wrapSeq(e.subject, e.relation, e.object, 'KNN'))
         })
       }
 
-      console.log(res)
       res.map(seq => {
         let tagIndex = 0
         seq.editDialog = false
@@ -277,10 +293,20 @@ export default {
       .tag
         margin-right: .5em
 
+        .text
+          text-align: center
+
         .label
           text-align: center
           margin: 0
           color: white
+
+      .tail-badge
+        border: solid 1px gray
+        border-radius: 5px
+        font-size: 12px
+        padding: 0 6px
+        cursor: pointer
 
     .action-area
       width: 8em

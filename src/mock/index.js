@@ -266,3 +266,46 @@ Mock.mock(/kb\/triple\/comment(\?.*)?$/, 'put', () => succeed(true))
 Mock.mock(/kb\/triple\/comment\/up(\?.*)?$/, () => succeed(true))
 
 Mock.mock(/kb\/triple\/comment\/down(\?.*)?$/, () => succeed(true))
+
+Mock.mock(/kb\/similar\/bm25(\?.*)?$/, () =>
+  succeed([
+    {
+      subject: '斑马',
+      relation: '吃',
+      object: '草'
+    },
+    {
+      subject: '牛',
+      relation: '吃',
+      object: '草'
+    }
+  ])
+)
+
+Mock.mock(/kb\/similar\/knn(\?.*)?$/, () =>
+  succeed([
+    {
+      subject: '斑马',
+      relation: '吃',
+      object: '肉'
+    },
+    {
+      subject: '牛',
+      relation: '吃',
+      object: '木头'
+    }
+  ])
+)
+
+Mock.mock(/\/kb\/extraction(\?.*)?$/, () =>
+  succeed([
+    {
+      values: ['是', '狮子', '动物'],
+      vector: 'dummy'
+    },
+    {
+      values: ['吃', '老虎', '肉'],
+      vector: 'dummy'
+    }
+  ])
+)

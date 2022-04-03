@@ -342,6 +342,10 @@ export const similarBm25 = query => {
   })
 }
 
+export const similarKnn = vector => {
+  return service.post(`/kb/similar/knn`, vector)
+}
+
 export const getAllTripleComment = tripleId => {
   return service.get(`/kb/triple/comment`, {
     params: {
