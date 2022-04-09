@@ -309,3 +309,13 @@ Mock.mock(/\/kb\/extraction(\?.*)?$/, () =>
     }
   ])
 )
+
+Mock.mock(/\/kb\/qa\/textQa(\?.*)?$/, () =>
+  succeed([
+    {
+      source: 'Source Text',
+      answers: ['Hair', 'Leg', 'Back'],
+      context: 'Kotlin is better that Java.'
+    }
+  ])
+)

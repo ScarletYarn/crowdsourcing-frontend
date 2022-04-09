@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { kbQAMask } from '@/service'
+import { kbQAMask, getTextQaResult } from '@/service'
 
 export default {
   name: 'NQA',
@@ -127,12 +127,21 @@ export default {
   },
   methods: {
     async search() {
-      this.loading = true
-      let res = await kbQAMask(this.query)
-      this.qaResult = res.data.data
-      this.noResult = this.qaResult.length === 0
-      this.showOutput = true
-      this.loading = false
+      if (this.activeSource === 'first') {
+        this.loading = true
+        let res = await kbQAMask(this.query)
+        this.qaResult = res.data.data
+        this.noResult = this.qaResult.length === 0
+        this.showOutput = true
+        this.loading = false
+      } else if (this.activeSource === 'second') {
+        this.loading = true
+        let res = await getTextQaResult(this.query, this.textSource)
+        this.qaResult = res.data.data
+        this.noResult = this.qaResult.length === 0
+        this.showOutput = true
+        this.loading = false
+      }
     },
     onExampleSelected(e) {
       this.query = e

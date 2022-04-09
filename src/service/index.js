@@ -379,3 +379,12 @@ export const tripleCommentDownvote = id => {
     }
   })
 }
+
+export const getTextQaResult = (query, text) => {
+  return service.get(`/kb/qa/textQa`, {
+    params: {
+      query,
+      text
+    }
+  })
+}
