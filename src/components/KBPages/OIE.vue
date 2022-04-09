@@ -38,7 +38,10 @@
       </div>
       <div class="output-data">
         <div class="result-row" v-for="(seq, index) in qaResult" :key="index">
-          <div class="annotation-area">
+          <div v-if="seq.dividerContent" class="result-divider">
+            {{ seq.dividerContent }}
+          </div>
+          <div v-if="!seq.dividerContent" class="annotation-area">
             <div v-for="(tag, _index) in seq" :key="_index">
               <div
                 v-if="tag.type === 'tag'"
@@ -57,7 +60,7 @@
             </div>
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
-          <div class="action-area">
+          <div v-if="!seq.dividerContent" class="action-area">
             <div class="category">
               <el-select v-model="seq.reason" placeholder="Select">
                 <el-option
@@ -175,16 +178,28 @@ export default {
       this.loading = true
       const res = []
       const extraction = (await infoExtraction(this.query)).data.data
+      res.push({
+        dividerContent: 'Extraction result:'
+      })
+      for (const item of extraction) {
+        res.push(this.wrapSeq(item.values[1], item.values[0], item.values[2]))
+      }
+      res.push({
+        dividerContent: 'BM25 similar items:'
+      })
       for (const item of extraction) {
         const query = item.values[1] + item.values[0] + item.values[2]
-        res.push(this.wrapSeq(item.values[1], item.values[0], item.values[2]))
         // eslint-disable-next-line
         const sim = (await similarBm25(query.replace(/[\[\]\|]/g, ''))).data
           .data
         sim.map(e => {
           res.push(this.wrapSeq(e.subject, e.relation, e.object, 'BM25'))
         })
-
+      }
+      res.push({
+        dividerContent: 'KNN similar items:'
+      })
+      for (const item of extraction) {
         const knn = (await similarKnn(item.vector.toString())).data.data
         knn.map(e => {
           res.push(this.wrapSeq(e.subject, e.relation, e.object, 'KNN'))
@@ -192,6 +207,7 @@ export default {
       }
 
       res.map(seq => {
+        if (seq.dividerContent) return
         let tagIndex = 0
         seq.editDialog = false
         seq.textBody = ''
@@ -281,6 +297,9 @@ export default {
       &:not(:last-child)
         border-bottom: rgb(229,229,229) solid 2px
         margin-bottom: 1em
+
+    .result-divider
+      margin-top: 1em
 
     .annotation-area
       margin: 0 1em
