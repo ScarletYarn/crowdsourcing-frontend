@@ -27,9 +27,8 @@
           <el-tab-pane label="KBs" name="first">
             <div class="source-tab">
               <el-checkbox-group v-model="kb">
-                <el-checkbox label="mask">None</el-checkbox>
-                <el-checkbox label="span">CSKG</el-checkbox>
-                <el-checkbox label="mask-word">V2C</el-checkbox>
+                <el-checkbox label="none">None</el-checkbox>
+                <el-checkbox label="cskg">CSKG</el-checkbox>
               </el-checkbox-group>
             </div>
           </el-tab-pane>
@@ -128,8 +127,11 @@ export default {
   methods: {
     async search() {
       if (this.activeSource === 'first') {
+        if (this.kb.length === 0) return
         this.loading = true
-        let res = await kbQAMask(this.query)
+        const includeNone = this.kb.indexOf('none') !== -1
+        const includeCSKG = this.kb.indexOf('cskg') !== -1
+        let res = await kbQAMask(this.query, includeNone, includeCSKG)
         this.qaResult = res.data.data
         this.noResult = this.qaResult.length === 0
         this.showOutput = true

@@ -257,9 +257,9 @@ export const kbSearchImage = qimg => {
   })
 }
 
-export const kbQAMask = q => {
+export const kbQAMask = (q, includeNone, includeCSKG) => {
   return service.get(`/kb/qa/mask`, {
-    params: { q: encodeURIComponent(q) }
+    params: { q: encodeURIComponent(q), includeNone, includeCSKG }
   })
 }
 
@@ -381,10 +381,6 @@ export const tripleCommentDownvote = id => {
 }
 
 export const getTextQaResult = (query, text) => {
-  return service.get(`/kb/qa/textQa`, {
-    params: {
-      query,
-      text
-    }
-  })
+  const uri = encodeURI(`?query=${query}&text=${text}`)
+  return service.get(`/kb/qa/textQa${uri}`)
 }
