@@ -55,6 +55,7 @@
               </div>
               <div v-else>OOPS!</div>
             </div>
+            <div class="tail-cnt" v-if="seq.cnt > 1">x {{ seq.cnt }}</div>
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
           <div v-if="!seq.dividerContent" class="action-area">
@@ -106,7 +107,7 @@ export default {
     }
   },
   methods: {
-    wrapSeq(subject, relation, object, source) {
+    wrapSeq(subject, relation, object, source, cnt) {
       const res = [
         {
           type: 'tag',
@@ -128,7 +129,28 @@ export default {
         }
       ]
       if (source) res.source = source
+      if (cnt) res.cnt = cnt
       return res
+    },
+    deduplicate(res) {
+      const dMap = {}
+      const cleanArr = []
+      res.map(item => {
+        const q = item.subject + item.relation + item.object
+        if (!(q in dMap)) {
+          cleanArr.push(item)
+          dMap[q] = 1
+        } else {
+          dMap[q]++
+        }
+      })
+
+      cleanArr.map(item => {
+        const q = item.subject + item.relation + item.object
+        item.cnt = dMap[q]
+      })
+
+      return cleanArr
     },
     async search() {
       this.loading = true
@@ -140,27 +162,37 @@ export default {
       for (const item of extraction) {
         res.push(this.wrapSeq(item.values[1], item.values[0], item.values[2]))
       }
+
       res.push({
         dividerContent: 'BM25 similar items:'
       })
+
+      const bSim = []
       for (const item of extraction) {
         const query = item.values[1] + item.values[0] + item.values[2]
         // eslint-disable-next-line
         const sim = (await similarBm25(query.replace(/[\[\]\|]/g, ''))).data
           .data
-        sim.map(e => {
-          res.push(this.wrapSeq(e.subject, e.relation, e.object, 'BM25'))
-        })
+        bSim.push(...sim)
       }
+      const dBmSim = this.deduplicate(bSim)
+      dBmSim.map(e => {
+        res.push(this.wrapSeq(e.subject, e.relation, e.object, 'BM25', e.cnt))
+      })
+
       res.push({
         dividerContent: 'KNN similar items:'
       })
+
+      const kSim = []
       for (const item of extraction) {
         const knn = (await similarKnn(item.vector.toString())).data.data
-        knn.map(e => {
-          res.push(this.wrapSeq(e.subject, e.relation, e.object, 'KNN'))
-        })
+        kSim.push(...knn)
       }
+      const dKnnSim = this.deduplicate(kSim)
+      dKnnSim.map(e => {
+        res.push(this.wrapSeq(e.subject, e.relation, e.object, 'KNN', e.cnt))
+      })
 
       res.map(seq => {
         if (seq.dividerContent) return
@@ -270,12 +302,13 @@ export default {
           margin: 0
           color: white
 
-      .tail-badge
+      .tail-cnt, .tail-badge
         border: solid 1px gray
         border-radius: 5px
         font-size: 12px
         padding: 0 6px
         cursor: pointer
+        margin-right: 0.5em
 
     .action-area
       width: 8em
