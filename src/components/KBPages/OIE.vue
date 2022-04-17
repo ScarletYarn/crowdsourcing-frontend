@@ -32,9 +32,6 @@
             {{ qaResult.length }} total Extractions
           </div>
         </div>
-        <div class="action-area">
-          <div class="save-button">Save</div>
-        </div>
       </div>
       <div class="output-data">
         <div class="result-row" v-for="(seq, index) in qaResult" :key="index">
@@ -61,35 +58,13 @@
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
           <div v-if="!seq.dividerContent" class="action-area">
-            <div class="category">
-              <el-select v-model="seq.reason" placeholder="Select">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </div>
             <div class="edit-button" @click="seq.editDialog = true">Edit</div>
             <el-dialog v-model="seq.editDialog" title="Edit Extraction">
               <div v-for="(tag, _index) in seq" :key="_index">
                 <div class="edit-section" v-if="tag.type === 'tag'">
                   <div class="position">{{ tag.label }}</div>
                   <div class="body">
-                    <span
-                      :class="{
-                        'active-select': tag.textInSelect[__index]
-                      }"
-                      v-for="(c, __index) in seq.textBody"
-                      :key="__index"
-                      @click="
-                        tag.textInSelect[__index] = !tag.textInSelect[__index]
-                      "
-                    >
-                      {{ c }}
-                    </span>
+                    <input type="text" v-model="tag.inEdit" />
                   </div>
                 </div>
               </div>
@@ -125,28 +100,6 @@ export default {
       noResult: false,
       loading: false,
       predefinedColors: ['#1BCAE3FF', '#E396DFFF', '#E37D6CFF'],
-      options: [
-        {
-          value: 'Option1',
-          label: 'Option1'
-        },
-        {
-          value: 'Option2',
-          label: 'Option2'
-        },
-        {
-          value: 'Option3',
-          label: 'Option3'
-        },
-        {
-          value: 'Option4',
-          label: 'Option4'
-        },
-        {
-          value: 'Option5',
-          label: 'Option5'
-        }
-      ],
       editDialog: false,
       startPosition: 0,
       length: 1
@@ -158,17 +111,20 @@ export default {
         {
           type: 'tag',
           label: '头实体',
-          text: subject
+          text: subject,
+          inEdit: subject
         },
         {
           type: 'tag',
           label: '关系',
-          text: relation
+          text: relation,
+          inEdit: relation
         },
         {
           type: 'tag',
           label: '尾实体',
-          text: object
+          text: object,
+          inEdit: object
         }
       ]
       if (source) res.source = source
@@ -210,17 +166,10 @@ export default {
         if (seq.dividerContent) return
         let tagIndex = 0
         seq.editDialog = false
-        seq.textBody = ''
         seq.reason = null
         seq.map(tag => {
-          seq.textBody += tag.text
           if (tag.type === 'tag') {
             tag.color = this.predefinedColors[tagIndex++]
-          }
-        })
-        seq.map(tag => {
-          if (tag.type === 'tag') {
-            tag.textInSelect = Array.from(seq.textBody).map(() => false)
           }
         })
       })
@@ -293,6 +242,7 @@ export default {
     .result-row
       display: flex
       justify-content: space-between
+      padding-bottom: 1em
 
       &:not(:last-child)
         border-bottom: rgb(229,229,229) solid 2px
@@ -330,14 +280,10 @@ export default {
     .action-area
       width: 8em
 
-      .category
-        width: 100%
-
       .edit-button
         @include button
         background-color: $attention
         padding: .3em 1em
-        margin: 1em 0
         width: 100%
         box-sizing: border-box
         text-align: center
@@ -360,10 +306,6 @@ export default {
   justify-content: space-between
   align-items: center
 
-  .body
-    user-select: none
-    cursor: pointer
-
   .position
     font-weight: bold
     min-width: 3em
@@ -379,8 +321,4 @@ export default {
     background-color: $cancel
     padding: .3em 1em
     margin: 1em 0.5em
-
-.active-select
-  background-color: $warn
-  color: white
 </style>
