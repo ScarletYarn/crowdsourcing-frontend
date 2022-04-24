@@ -384,3 +384,12 @@ export const getTextQaResult = (query, text) => {
   const uri = encodeURI(`?query=${query}&text=${text}`)
   return service.get(`/kb/qa/textQa${uri}`)
 }
+
+export const getEntailment = (premise, hypothesises) => {
+  return service.get(`/kb/entailment`, {
+    params: {
+      premise,
+      hypothesises
+    }
+  })
+}

@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { ElMessage } from 'element-plus'
+
 export default {
   name: 'Home',
   data() {
@@ -23,6 +25,14 @@ export default {
   },
   methods: {
     async q() {
+      if (!this.search.trim()) {
+        await ElMessage({
+          type: 'warning',
+          message: '请输入查询内容',
+          duration: 1000
+        })
+        return
+      }
       await this.$router.push({
         name: 'entity',
         params: {

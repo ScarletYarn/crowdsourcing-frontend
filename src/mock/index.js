@@ -319,3 +319,5 @@ Mock.mock(/\/kb\/qa\/textQa(\?.*)?$/, () =>
     }
   ])
 )
+
+Mock.mock(/\/kb\/entailment(\?.*)?$/, () => succeed([0.234, 0.999]))

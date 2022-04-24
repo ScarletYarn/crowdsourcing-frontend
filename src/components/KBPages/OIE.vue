@@ -55,6 +55,7 @@
               </div>
               <div v-else>OOPS!</div>
             </div>
+            <div class="tail-cnt" v-if="seq.score">{{ seq.score }}</div>
             <div class="tail-cnt" v-if="seq.cnt > 1">x {{ seq.cnt }}</div>
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
@@ -87,7 +88,12 @@
 </template>
 
 <script>
-import { infoExtraction, similarBm25, similarKnn } from '@/service'
+import {
+  infoExtraction,
+  similarBm25,
+  similarKnn,
+  getEntailment
+} from '@/service'
 
 export default {
   name: 'OIE',
@@ -107,6 +113,12 @@ export default {
     }
   },
   methods: {
+    packPremise(p) {
+      return p[0].text + p[1].text + p[2].text
+    },
+    packHypo(h) {
+      return h[0].text + h[1].text + h[2].text
+    },
     wrapSeq(subject, relation, object, source, cnt) {
       const res = [
         {
@@ -159,8 +171,15 @@ export default {
       res.push({
         dividerContent: 'Extraction result:'
       })
+      const extSet = []
       for (const item of extraction) {
-        res.push(this.wrapSeq(item.values[1], item.values[0], item.values[2]))
+        const wExt = this.wrapSeq(
+          item.values[1],
+          item.values[0],
+          item.values[2]
+        )
+        res.push(wExt)
+        extSet.push(wExt)
       }
 
       res.push({
@@ -176,8 +195,17 @@ export default {
         bSim.push(...sim)
       }
       const dBmSim = this.deduplicate(bSim)
+      const bSet = []
       dBmSim.map(e => {
-        res.push(this.wrapSeq(e.subject, e.relation, e.object, 'BM25', e.cnt))
+        const wExt = this.wrapSeq(
+          e.subject,
+          e.relation,
+          e.object,
+          'BM25',
+          e.cnt
+        )
+        bSet.push(wExt)
+        res.push(wExt)
       })
 
       res.push({
@@ -191,7 +219,9 @@ export default {
       }
       const dKnnSim = this.deduplicate(kSim)
       dKnnSim.map(e => {
-        res.push(this.wrapSeq(e.subject, e.relation, e.object, 'KNN', e.cnt))
+        const wExt = this.wrapSeq(e.subject, e.relation, e.object, 'KNN', e.cnt)
+        bSet.push(wExt)
+        res.push(wExt)
       })
 
       res.map(seq => {
@@ -205,6 +235,14 @@ export default {
           }
         })
       })
+
+      const premise = bSet.map(this.packPremise).join('。') + '。'
+      const hyp = extSet.map(this.packHypo)
+      const scoreList = (await getEntailment(premise, hyp)).data.data
+      extSet.map((e, i) => {
+        e.score = scoreList[i]
+      })
+
       this.qaResult = res
       this.noResult = this.qaResult.length === 0
       this.showOutput = true
