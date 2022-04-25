@@ -94,6 +94,7 @@ import {
   similarKnn,
   getEntailment
 } from '@/service'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'OIE',
@@ -114,10 +115,12 @@ export default {
   },
   methods: {
     packPremise(p) {
-      return p[0].text + p[1].text + p[2].text
+      // eslint-disable-next-line
+      return (p[0].text + p[1].text + p[2].text).replace(/[\[\]\|]/g, '')
     },
     packHypo(h) {
-      return h[0].text + h[1].text + h[2].text
+      // eslint-disable-next-line
+      return (h[0].text + h[1].text + h[2].text).replace(/[\[\]\|]/g, '')
     },
     wrapSeq(subject, relation, object, source, cnt) {
       const res = [
@@ -165,6 +168,14 @@ export default {
       return cleanArr
     },
     async search() {
+      if (!this.query.trim()) {
+        await ElMessage({
+          type: 'warning',
+          message: '请输入抽取内容',
+          duration: 1000
+        })
+        return
+      }
       this.loading = true
       const res = []
       const extraction = (await infoExtraction(this.query)).data.data
@@ -238,7 +249,7 @@ export default {
 
       const premise = bSet.map(this.packPremise).join('。') + '。'
       const hyp = extSet.map(this.packHypo)
-      const scoreList = (await getEntailment(premise, hyp)).data.data
+      const scoreList = (await getEntailment(premise, hyp.join(';'))).data.data
       extSet.map((e, i) => {
         e.score = scoreList[i]
       })

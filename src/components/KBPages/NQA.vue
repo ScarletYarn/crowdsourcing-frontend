@@ -96,6 +96,7 @@
 
 <script>
 import { kbQAMask, getTextQaResult } from '@/service'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'NQA',
@@ -126,8 +127,23 @@ export default {
   },
   methods: {
     async search() {
+      if (!this.query.trim()) {
+        await ElMessage({
+          type: 'warning',
+          message: '请输入QA内容',
+          duration: 1000
+        })
+        return
+      }
       if (this.activeSource === 'first') {
-        if (this.kb.length === 0) return
+        if (this.kb.length === 0) {
+          await ElMessage({
+            type: 'warning',
+            message: '请选择来源',
+            duration: 1000
+          })
+          return
+        }
         this.loading = true
         const includeNone = this.kb.indexOf('none') !== -1
         const includeCSKG = this.kb.indexOf('cskg') !== -1
@@ -137,6 +153,14 @@ export default {
         this.showOutput = true
         this.loading = false
       } else if (this.activeSource === 'second') {
+        if (!this.textSource.trim()) {
+          await ElMessage({
+            type: 'warning',
+            message: '请输入补充文本',
+            duration: 1000
+          })
+          return
+        }
         this.loading = true
         let res = await getTextQaResult(this.query, this.textSource)
         this.qaResult = res.data.data
