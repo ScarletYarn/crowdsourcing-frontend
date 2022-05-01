@@ -55,11 +55,16 @@
               </div>
               <div v-else>OOPS!</div>
             </div>
-            <div class="tail-cnt" v-if="seq.score">{{ seq.score }}</div>
+            <div class="tail-score-box">
+              <div class="tail-score" v-if="seq.score">{{ seq.score }}</div>
+              <div class="tail-score" v-if="seq.score < 0.9">
+                可能错误/冲突
+              </div>
+            </div>
             <div class="tail-cnt" v-if="seq.cnt > 1">x {{ seq.cnt }}</div>
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
-          <div v-if="!seq.dividerContent" class="action-area">
+          <div v-if="!seq.dividerContent && !seq.isExt" class="action-area">
             <div class="edit-button" @click="seq.editDialog = true">Edit</div>
             <el-dialog v-model="seq.editDialog" title="Edit Extraction">
               <div v-for="(tag, _index) in seq" :key="_index">
@@ -77,6 +82,25 @@
                 <div class="save-button">Save</div>
               </div>
             </el-dialog>
+          </div>
+          <div
+            v-if="seq.isExt && seq.score < 0.9 && !seq.action"
+            class="action-area"
+          >
+            <div class="accept-button" @click="seq.action = 'Accepted'">
+              Accept
+            </div>
+            <div class="decline-button" @click="seq.action = 'Declined'">
+              Decline
+            </div>
+          </div>
+          <div
+            class="action-area"
+            v-if="seq.isExt && seq.score < 0.9 && seq.action"
+          >
+            <div class="ext-action">
+              {{ seq.action }}
+            </div>
           </div>
         </div>
         <div class="empty-result" v-if="noResult">
@@ -189,6 +213,7 @@ export default {
           item.values[0],
           item.values[2]
         )
+        wExt.isExt = true
         res.push(wExt)
         extSet.push(wExt)
       }
@@ -351,7 +376,7 @@ export default {
           margin: 0
           color: white
 
-      .tail-cnt, .tail-badge
+      .tail-score, .tail-cnt, .tail-badge
         border: solid 1px gray
         border-radius: 5px
         font-size: 12px
@@ -359,16 +384,41 @@ export default {
         cursor: pointer
         margin-right: 0.5em
 
+      .tail-score-box
+        display: flex
+        flex-direction: column
+        align-items: flex-start
+
+      .tail-score
+        margin-bottom: 4px
+
     .action-area
       width: 8em
 
-      .edit-button
+      .edit-button, .decline-button
         @include button
         background-color: $attention
         padding: .3em 1em
         width: 100%
         box-sizing: border-box
         text-align: center
+
+      .accept-button
+        margin-bottom: 4px
+
+      .accept-button
+        @include button
+        background-color: $primary
+        padding: .3em 1em
+        width: 100%
+        box-sizing: border-box
+        text-align: center
+
+      .ext-action
+        border: solid 1px gray
+        border-radius: 5px
+        text-align: center
+        padding: calc(.3em - 2px) calc(1em - 2px)
 
 .empty-result
   color: rgb(150,150,150)
