@@ -6,6 +6,8 @@
         <input
           type="file"
           class="video-upload"
+          name = "video_file"
+          id = "video_file"
           @change="onVideoUploaded"
           accept=".mov,.mp4"
         />
@@ -14,24 +16,73 @@
         </video>
       </div>
       <div class="source-tab2">
-        <div
-          class="submit"
-          @click="search1()"
-          v-loading.fullscreen.lock="loading"
-        >
-          CAPTION GENERATION
+        <div class="generated-caption" v-loading.fullscreen.lock="loading">
+          GENERATED CAPTION
         </div>
         <div class="my-textarea">
           <div v-if="showOutput0">
-            <div class="caption">{{ caption_res }}</div>
+            <div class="caption" v-if="if_fix">
+              <div>{{ caption_res }}</div>
+              <div style="
+              width: 40px;
+              float: right;
+              margin-right: 180px;
+              margin-top: -20px;
+              ">
+              <el-button
+                type="warning"
+                @click="fix"
+                round
+                size="mini"
+                class="fix"
+              >
+                fix</el-button
+              >
+              <el-button
+                type="warning"
+                @click="search2()"
+                round
+                size="mini"
+                class="ok"
+              >
+                ok</el-button
+              >
+              </div>
+            </div>
+            <div class="caption" v-if="if_confirm">
+              <textarea
+                placeholder="write your caption"
+                v-model="text_cap"
+                row="1"
+                style="
+                  border: 0px solid red;
+                  font-size: 15px;
+                  top: -100px;
+                  
+                  float: left;
+                  width: 100%;
+                  height: 20px;
+                  resize: none;
+                "
+              ></textarea>
+              <el-button
+                type="warning"
+                @click="confirm"
+                round
+                size="small"
+                class="confirm"
+              >
+                confirm</el-button
+              >
+            </div>
+            <!-- <textarea class="caption"></textarea> -->
           </div>
         </div>
         <div
-          class="submit"
-          @click="search2()"
+          class="generated-caption"
           v-loading.fullscreen.lock="loading"
         >
-          REALATED QUERY
+          RELATED QUERY
         </div>
         <div class="my-textarea1">
           <div v-if="showOutput1">
@@ -44,91 +95,60 @@
             </div>
           </div>
         </div>
+       
       </div>
-      <div class="label" style="text-align:left">Commonsense List</div>
+
       <div class="qa-source-body">
-        <el-tabs v-model="activeSource" @tab-click="handleClick">
-          <el-tab-pane
-            v-for="(item, index) in commonsense_tab"
-            :key="index"
-            :label="item.tab"
-            :name="item.name"
-          >
-            <div
-              class="submit"
-              @click="search()"
-              v-loading.fullscreen.lock="loading"
-            >
-              Submit
+        <div class="output" v-if="showOutput">
+          <div class="divider"></div>
+          <div class="output-title" style="text-align: left">Result</div>
+          <div class="output-data">
+            <div class="data-row title-row">
+              <div class="data-cell-left">GT CAPTION</div>
+              <!-- <div class="data-cell">GT CMS KNOWLEDGE</div> -->
+              <div class="data-cell-right">
+                Answers
+                <!-- <div class="data-cell">{{ item.tab }}</div> -->
+              </div>
             </div>
-            <div class="output" v-if="showOutput">
-              <div class="divider"></div>
-              <div class="output-title" style="text-align:left">Result</div>
-              <div class="output-data">
-                <div class="data-row title-row">
-                  <div class="data-cell">GT CAPTION</div>
-                  <div class="data-cell">GT CMS KNOWLEDGE</div>
-                  <div class="data-cell">Answers({{ item.tab }})</div>
-                </div>
-                <div
-                  class="data-row"
-                  v-for="(item, index) in qaResult"
-                  :key="index"
-                >
-                  <div class="data-cell">{{ item.caption }}</div>
-                  <div class="data-cell">
-                    <div
-                      class="answer-item"
-                      v-for="(subItem, subIndex) in item.cms_knowledge[
-                        selected_tab
-                      ]"
-                      :key="subIndex"
-                    >
-                      {{ subItem }}
-                    </div>
-                  </div>
-                  <div class="data-cell" v-if="show_en">
-                    <div
-                      class="answer-item"
-                      v-for="(subItem, subIndex) in item.answers[selected_tab]"
-                      :key="subIndex"
-                    >
-                      {{ subItem }}
-                    </div>
-                  </div>
-                  <div class="data-cell" v-if="en_to_zh">
-                    <div
-                      class="answer-item"
-                      v-for="(subItem, subIndex) in trans_res[selected_tab]"
-                      :key="subIndex"
-                    >
-                      {{ subItem.dst }}
-                    </div>
-                  </div>
-                </div>
-                <div class="data-row empty-result" v-if="noResult">
-                  <div class="data-cell">No result</div>
+            <div class="data-row">
+              <div class="data-cell-left-item">
+                {{ trans_res.caption['dst'] }}
+              </div>
+              <div
+                class="data-cell-right-item-title"
+                v-for="(item1, index1) in trans_res.cms"
+                :key="index1"
+              >
+                <div class="data-cell-right-item-content">{{ item1.tab }}</div>
+                <div class="data-cell-right-item-content">
+                  {{ item1.zh }}
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-        </el-tabs>
+            <div class="data-row empty-result" v-if="noResult">
+              <div class="data-cell">No result</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="submit" @click="MYtrans()" v-loading.fullscreen.lock="loading">
+    <!-- <div class="submit" @click="MYtrans()" v-loading.fullscreen.lock="loading" >
       Translate
-    </div>
+    </div> -->
   </div>
 </template>
 
-<script>
+<script >
 import axios from 'axios'
 import md5 from 'js-md5'
 import { jsonp } from 'vue-jsonp'
-/*引入资源请求插件*/
+import {
+  kbV2C,
+  uploadVideo
+} from '@/service'
 
-/*使用VueResource插件*/
 export default {
   name: 'try_v2c',
   mounted() {
@@ -136,6 +156,10 @@ export default {
   },
   data() {
     return {
+      if_fix: true,
+      if_confirm: false,
+      text_cap: '', //用户重新输入的caption
+      video_name: '', //用户上传的视频的名字,要传送给后台用来生成caption
       trans_params: {
         q: '', //待翻译的句子或单词
         from: 'en',
@@ -144,7 +168,16 @@ export default {
         salt: '',
         sign: ''
       },
-      trans_res: {},
+      trans_res: {
+        caption: { dst: '' },
+        cms: [
+          { tab: 'INTENTION', zh: '' },
+          { tab: 'EFFECT', zh: '' },
+          { tab: 'ATTRIBUTE', zh: '' },
+          { tab: 'NEED', zh: '' },
+          { tab: 'REACT', zh: '' }
+        ]
+      },
       en_to_zh: false,
       show_en: true,
       commonsense_tab: [
@@ -169,58 +202,9 @@ export default {
       showOutput: false,
       showOutput0: false,
       showOutput1: false,
-      qaResult: [],
-      noResult: false,
-      loading: false,
-      activeSource: 'first',
-      kb: null,
-      textSource: null,
-      videoSrc: null,
-      caption_res: null,
-      related_query_res: null
-    }
-  },
-  methods: {
-    MYtrans() {
-      if (this.show_en) {
-        var sentence_to_trans = this.qaResult[0].answers[this.selected_tab][0] //"to play \n to study"
-        console.log(sentence_to_trans)
-        const url = 'http://fanyi-api.baidu.com/api/trans/vip/translate'
-        var appid = '20201120000621111' //"20200725000526254"
-        var userkey = 'grnMILFaU8ZH1obS6aeP' //"Us3Vayxw3SGmccAs7ytg"
-        //var salt=Math.random(32768, 65536);
-
-        this.trans_params.salt = Math.random(32768, 65536)
-        //var sign = md5(appid + sentence_to_trans + salt + userkey);
-        this.trans_params.sign = md5(
-          this.trans_params.appid +
-            sentence_to_trans +
-            this.trans_params.salt +
-            userkey
-        )
-        //var q = encodeURIComponent(sentence_to_trans);
-        this.trans_params.q = sentence_to_trans
-        //let url=/baidu
-        jsonp(url, this.trans_params).then(res => {
-          this.en_to_zh = true
-          this.show_en = false
-          var tab = this.selected_tab
-          console.log(tab)
-          this.trans_res[tab] = res.trans_result
-          console.log(res.trans_result)
-        })
-      } else {
-        this.show_en = true
-        this.en_to_zh = false
-      }
-    },
-    async search() {
-      this.loading = true
-      await new Promise(resolve => {
-        setTimeout(() => {
-          this.qaResult = [
-            {
-              caption: 'a person is using a spoon to mix a dessert in a bowl',
+      qaResult: [
+        {
+              caption: 'a man wearing shorts is running',//'a group of short men dance with a tall attractive woman',//'a person is using a spoon to mix a dessert in a bowl',
               cms_knowledge: {
                 ATTRIBUTE: ['hungry', 'starving', 'eating', 'prepared'],
                 EFFECT: [
@@ -242,15 +226,146 @@ export default {
               },
 
               answers: {
-                ATTRIBUTE: ['hungry'],
-                EFFECT: ['gets a spoon'],
-                INTENTION: ['to eat it'],
-                NEED: ['to gather the ingredients'],
-                REACT: ['happy to have soup']
+                ATTRIBUTE: ['fashionable'],//['graceful'],//['hungry'],
+                EFFECT: ['hats obscure vision'],//['makes new dance moves'],//['gets a spoon'],
+                INTENTION: ['to be fashionable'],//['to dance'],//['to eat it'],
+                NEED: ['to drive to the mechanic'],//['to like dancing'],//['to gather the ingredients'],
+                REACT: ['accomplished'],//['excited'],//['happy to have soup']
+              }
+            }
+      ],
+      noResult: false,
+      loading: false,
+      activeSource: 'first',
+      kb: null,
+      textSource: null,
+      videoSrc: null, //用户上传的视频的地址,要传送给后台用来生成caption
+      caption_res: null, //最后确认上传视频的caption，要传到后台生成query等
+      related_query_res: null
+    }
+  },
+  methods: {
+    fix() {
+      this.if_fix = false
+      this.if_confirm = true
+    },
+    confirm() {
+      this.if_fix = true
+      this.if_confirm = false
+      console.log(this.text_cap)
+      this.loading = true
+       setTimeout(() => {
+         this.loading = false
+      if (this.text_cap.length == 0) {
+        alert('your caption can not be null')
+        return
+      } else this.caption_res = this.text_cap
+       },1000)
+    },
+  async  MYtrans() {
+      if (this.show_en) {
+        //var caption_to_trans=this.qaResult[0].caption;
+        var caption_to_trans = this.caption_res
+        var intention_to_trans = this.qaResult[0].answers['INTENTION'][0]
+        var effect_to_trans = this.qaResult[0].answers['EFFECT'][0]
+        var attribute_to_trans = this.qaResult[0].answers['ATTRIBUTE'][0]
+        var need_to_trans = this.qaResult[0].answers['NEED'][0]
+        var react_to_trans = this.qaResult[0].answers['REACT'][0]
+
+        var sentence_to_trans =
+          caption_to_trans +
+          '\n' +
+          intention_to_trans +
+          '\n' +
+          effect_to_trans +
+          '\n' +
+          attribute_to_trans +
+          '\n' +
+          need_to_trans +
+          '\n' +
+          react_to_trans //this.qaResult[0].answers[this.selected_tab][0]//"to play \n to study"
+        //console.log(console.log("sen:",sentence_to_trans))
+        const url = 'http://fanyi-api.baidu.com/api/trans/vip/translate'
+        var appid = '20201120000621111' //"20200725000526254"
+        var userkey = 'grnMILFaU8ZH1obS6aeP' //"Us3Vayxw3SGmccAs7ytg"
+        //var salt=Math.random(32768, 65536);
+
+        this.trans_params.salt = Math.random(32768, 65536)
+        //var sign = md5(appid + sentence_to_trans + salt + userkey);
+        this.trans_params.sign = md5(
+          this.trans_params.appid +
+            sentence_to_trans +
+            this.trans_params.salt +
+            userkey
+        )
+        //var q = encodeURIComponent(sentence_to_trans);
+        this.trans_params.q = sentence_to_trans
+        //let url=/baidu
+        jsonp(url, this.trans_params).then((res) => {
+          this.en_to_zh = true
+          this.show_en = false
+          var tab = this.selected_tab
+          console.log(res)
+          this.trans_res['caption'] = res.trans_result[0]
+          console.log('zh-caption:', this.trans_res['caption'])
+          // this.trans_res["cms"]=res.trans_result.slice(1)
+
+          for (var i = 1; i < 6; i++) {
+            this.trans_res.cms[i - 1]['zh'] = res.trans_result[i].dst
+            console.log('zh:', res.trans_result[i].dst)
+          }
+          console.log('zh-cms:', this.trans_res['cms'])
+        })
+      } else {
+        this.show_en = true
+        this.en_to_zh = false
+      }
+    },
+    async search() {
+      if (this.caption_res == null) {
+        alert('please generate the caption first')
+        return
+      } else if (this.related_query_res == null) {
+        alert('please generate the related query first!')
+        return
+      }
+      this.loading = true
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          this.qaResult = [
+            {
+              caption: 'a man wearing shorts is running',//'a group of short men dance with a tall attractive woman',//'a person is using a spoon to mix a dessert in a bowl',
+              cms_knowledge: {
+                ATTRIBUTE: ['hungry', 'starving', 'eating', 'prepared'],
+                EFFECT: [
+                  'thinks about what to put in the bowl next',
+                  'tastes the cereal flavour',
+                  'Person X eats the dessert'
+                ],
+                INTENTION: [
+                  'to bake a cake',
+                  'to eat something sweet',
+                  'to serve cake to each other'
+                ],
+                NEED: [
+                  'to mix the ingredients',
+                  'To get the bowl',
+                  'to gather the ingredients'
+                ],
+                REACT: ['proud of the pudding', 'hungry', 'stomach full']
+              },
+
+              answers: {
+                ATTRIBUTE: ['fashionable'],//['graceful'],//['hungry'],
+                EFFECT: ['hats obscure vision'],//['makes new dance moves'],//['gets a spoon'],
+                INTENTION: ['to be fashionable'],//['to dance'],//['to eat it'],
+                NEED: ['to drive to the mechanic'],//['to like dancing'],//['to gather the ingredients'],
+                REACT: ['accomplished'],//['excited'],//['happy to have soup']
               }
             }
           ]
           this.noResult = this.qaResult.length === 0
+          this.MYtrans()
           this.showOutput = true
           this.loading = false
           this.en_to_zh = false
@@ -260,11 +375,16 @@ export default {
       })
     },
     async search1() {
+      if (this.videoSrc == null) {
+        alert('please upload the video first!')
+        return
+      }
       this.loading = true
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(() => {
           this.caption_res =
-            'a person is using a spoon to mix a dessert in a bowl'
+            'a man wearing shorts is running'
+            //'a group of short men dance with a tall attractive woman'
           this.loading = false
           this.showOutput0 = true
           resolve()
@@ -272,26 +392,92 @@ export default {
       })
     },
     async search2() {
-      this.loading = true
-      await new Promise(resolve => {
-        setTimeout(() => {
-          this.related_query_res = [
-            'PersonX makes dessert',
-            'PersonX mixes the ingredients together',
-            'PersonX mixes it up'
-          ]
-          this.loading = false
-          this.showOutput1 = true
-          resolve()
-        }, 2000)
-      })
+      if (this.caption_res == null) {
+        alert('please generate the caption first！')
+        return
+      }
+      this.loading = true;
+      var video_name = this.video_name
+      
+      var idx_v = video_name.search("video")
+      if(idx_v!=0){
+        this.video_name = 30001;
+      }
+      else{
+        var stop = video_name.search(".mp4")
+        this.video_name = Number(video_name.substring(5,stop+1));
+      }
+      console.log("caption:",this.caption_res);
+      console.log("video:",this.video_name);
+      let res = await kbV2C(this.caption_res,this.video_name);
+      console.log("kbV2C:",res);
+      console.log("intention:",res.data.data.intention);
+      this.qaResult[0].answers['INTENTION'] = [res.data.data.intention]
+      this.qaResult[0].answers['EFFECT'] = [res.data.data.effect]
+      this.qaResult[0].answers['ATTRIBUTE'] = [res.data.data.attribute]
+      this.qaResult[0].answers['NEED'] = [res.data.data.need]
+      this.qaResult[0].answers['REACT'] = [res.data.data.react]
+      console.log("answer:",this.qaResult.answers);
+      this.related_query_res = []
+      for(var i=1;i<=3;i++){
+        this.related_query_res[i-1] = res.data.data["query"+i]
+      }
+      this.showOutput1 = true
+      console.log("related_query:",this.related_query_res);
+      this.MYtrans()
+      this.showOutput = true
+      this.loading = false
+      // await new Promise((resolve) => {
+      //   setTimeout(() => {
+      //     this.related_query_res = [
+      //       'PersonX wears shorts ',
+      //       'PersonX runs fast ',
+      //       'PersonX runs very fast '
+
+      //       // 'PersonX dances with PersonX\'s friends',
+      //       // 'PersonX dances to the music',
+      //       // 'PersonX loves to dance'
+      //     ]
+      //     this.loading = false
+      //     this.showOutput1 = true
+      //     resolve()
+      //   }, 2000)
+      // })
+      // await new Promise((resolve) => {
+      //   this.search();
+      //   resolve();
+      // })
     },
     onExampleSelected(e) {
       this.query = e
     },
-    onVideoUploaded(e) {
+    async onVideoUploaded(e) {
       let file = e.target.files[0]
       this.videoSrc = URL.createObjectURL(file)
+      console.log(e.target.files)
+      //this.video_name = e.target.files[0].name
+
+      await new Promise((resolve) => {
+        this.loading = true
+        setTimeout(() => {
+          /*
+          视频上传至服务器
+          */
+          // let res = uploadVideo(file,this.video_name)
+          console.log("video start")
+          let res = uploadVideo(e.target.files[0],file.name)
+          console.log("video_upload:",res)
+          this.caption_res =
+          'a man wearing shorts is running'
+            //'a group of short men dance with a tall attractive woman'
+          
+          this.loading = false
+          this.showOutput0 = true
+          // console.log("caption1");
+        
+          resolve()
+        }, 2000)
+      })
     },
     handleClick(tab, event) {
       console.log(tab.index)
@@ -321,8 +507,8 @@ export default {
 .label
   margin-bottom: .4em
   margin-top: .8em
-  font-weight:600
-  text-align:left
+  font-weight: 600
+  text-align: left
 
 .submit
   background-color: $primary
@@ -364,10 +550,27 @@ export default {
 
     .data-row, .title-row
       background-color: rgb(248,249,250)
-
-    .data-cell
+    .data-cell-right-item-title
       padding: 1em
-      width: 33%
+      width: 12.05%
+      border: 1px solid rgb(222,226,230)
+    .data-cell-right-item-content
+      padding: top 1em
+      width: 100%
+      height: 50%
+      text-align: center
+      //border-top: 1px solid rgb(222,226,230)
+    .data-cell-left-item
+      padding: 1.5em
+      width: 30%
+      border: 1px solid rgb(222,226,230)
+    .data-cell-left
+      padding: 1em
+      width: 30%
+      border: 1px solid rgb(222,226,230)
+    .data-cell-right
+      padding: 1em
+      width: 70%
       border: 1px solid rgb(222,226,230)
 
 .empty-result
@@ -377,7 +580,7 @@ export default {
 
 .answer-item:not(:last-child)
   margin-bottom: .3em
-  text-align:center
+  text-align: center
 
 .qa-source
   .source-tab
@@ -393,45 +596,92 @@ export default {
     align-items: center
     flex-direction: column
     .my-textarea
-      width:600px
-      height:50px
-      align-items:center
-      text-align:center
-      display:flex
+      padding:1em
+      //width: 600px
+      height: 60px
+      align-items: center
+      text-align: center
+      display: flex
+
+      .fix
+        //margin-right: -520px
+        margin-bottom: -40px
+        width: auto
+        margin-top:0px
+        //float:left
+      .ok
+        margin-right: -520px
+        margin-bottom: -40px
+        margin-top:0px
+        width: auto
+        background-color: #118ab2
+        border: 0px
+        &:hover
+          opacity: .7
+        //float:left
+      .confirm
+        margin-right: -100px
+        margin-bottom: -40px
+        //float: right
+      .el-button
+        //float: right
+        
+        padding: 0.5em
+
       .caption
-        align-items:center
-        text-align:center
-        border: 1px solid rgb(222,226,230)
-        font-size:18px
+        padding: 0.5em
+        width: 400px
+        align-items: center
+        text-align: center
+        border: 1px solid #e8ecf0
+        font-size: 18px
         background-color: rgb(256,256,256)
         border: radius 40px
     .my-textarea1
-      width:600px
-      height:130px
-      text-align:center
-      display:flex
+      width: 600px
+      height: 80px
+      text-align: center
+      //display: flex
+      padding:1em
+      margin:1em
       .caption
-        align-items:center
-        text-align:center
-        border: 1px solid rgb(222,226,230)
-        font-size:18px
-        margin:1px
+        align-items: center
+        text-align: center
+        border: 1px solid #e8ecf0
+        font-size: 18px
+        margin: 1px
+        padding : 0.3em
         background-color: rgb(256,256,256)
-
+    .generated-caption
+      border-radius:10px
+      border: 2px solid #c9d7e6
+      background-color: #a6d7e7
+      text-align:center
+      padding:0.7em
+      width: 40%
+      color: white
+      border: radius 20px
+      display: inline-block
+      margin: bottom 1em
+      //cursor: pointer
+      user-select: none
+      //transition: .2s
+      //text-align: left
+     
     .submit
       background-color: $primary
-      width:40%
+      width: 40%
       color: white
-
+      border: radius 20px
       display: inline-block
       margin: bottom 1em
       cursor: pointer
       user-select: none
       transition: .2s
-      text-align:left
+      //text-align: left
       &:hover
         opacity: .7
 
 .caption
-  text-align:center
+  text-align: center
 </style>

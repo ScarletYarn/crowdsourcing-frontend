@@ -263,6 +263,19 @@ export const kbQAMask = (q, includeNone, includeCSKG) => {
   })
 }
 
+export const kbV2C = (caption, video) => {
+  return service.get(`/kb/v2c/generate`, {
+    params: { caption, video }
+  })
+}
+
+export const uploadVideo = (file, name) => {
+  const f = new FormData()
+  f.append('video_file', file)
+  f.append('name', name)
+  return service.post(`/kb/v2c/video_upload`, f)
+}
+
 export const kbQASpan = q => {
   return service.get(`/kb/qa/span`, {
     params: { q: encodeURIComponent(q) }
