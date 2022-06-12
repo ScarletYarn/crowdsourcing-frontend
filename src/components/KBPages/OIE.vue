@@ -1,12 +1,12 @@
 <template>
   <div class="page-body">
-    <div class="page-title">Open Information Extraction</div>
+    <div class="page-title">开放信息抽取</div>
     <div class="example-input">
-      <div class="label">Example inputs</div>
+      <div class="label">查询样例</div>
       <el-select
         v-model="example"
         @change="onExampleSelected"
-        placeholder="Select an example query"
+        placeholder="请选择查询样例"
       >
         <el-option
           v-for="item in examples"
@@ -17,20 +17,18 @@
       </el-select>
     </div>
     <div class="query-input">
-      <div class="label">Query</div>
+      <div class="label">查询语句</div>
       <el-input v-model="query"></el-input>
     </div>
     <div class="submit" @click="search()" v-loading.fullscreen.lock="loading">
-      Submit
+      提交
     </div>
     <div class="output" v-if="showOutput">
       <div class="divider"></div>
       <div class="output-title-section">
         <div class="content-area">
-          <div class="output-title">Output</div>
-          <div class="output-count">
-            {{ qaResult.length }} total Extractions
-          </div>
+          <div class="output-title">结果</div>
+          <div class="output-count">总共 {{ qaResult.length - 3 }} 个条目</div>
         </div>
       </div>
       <div class="output-data">
@@ -56,7 +54,9 @@
               <div v-else>OOPS!</div>
             </div>
             <div class="tail-score-box">
-              <div class="tail-score" v-if="seq.score">{{ seq.score }}</div>
+              <div class="tail-score" v-if="seq.score">
+                {{ parseFloat(seq.score).toFixed(4) }}
+              </div>
               <div class="tail-score" v-if="seq.score < 0.9">
                 可能错误/冲突
               </div>
@@ -65,7 +65,7 @@
             <div class="tail-badge" v-if="seq.source">{{ seq.source }}</div>
           </div>
           <div v-if="!seq.dividerContent && !seq.isExt" class="action-area">
-            <div class="edit-button" @click="seq.editDialog = true">Edit</div>
+            <div class="edit-button" @click="seq.editDialog = true">编辑</div>
             <el-dialog v-model="seq.editDialog" title="Edit Extraction">
               <div v-for="(tag, _index) in seq" :key="_index">
                 <div class="edit-section" v-if="tag.type === 'tag'">
@@ -87,11 +87,11 @@
             v-if="seq.isExt && seq.score < 0.9 && !seq.action"
             class="action-area"
           >
-            <div class="accept-button" @click="seq.action = 'Accepted'">
-              Accept
+            <div class="accept-button" @click="seq.action = '已接受'">
+              接受
             </div>
-            <div class="decline-button" @click="seq.action = 'Declined'">
-              Decline
+            <div class="decline-button" @click="seq.action = '已拒绝'">
+              拒绝
             </div>
           </div>
           <div
@@ -204,7 +204,7 @@ export default {
       const res = []
       const extraction = (await infoExtraction(this.query)).data.data
       res.push({
-        dividerContent: 'Extraction result:'
+        dividerContent: '抽取结果:'
       })
       const extSet = []
       for (const item of extraction) {
@@ -219,7 +219,7 @@ export default {
       }
 
       res.push({
-        dividerContent: 'BM25 similar items:'
+        dividerContent: 'BM25相似条目:'
       })
 
       const bSim = []
@@ -245,7 +245,7 @@ export default {
       })
 
       res.push({
-        dividerContent: 'KNN similar items:'
+        dividerContent: 'KNN相似条目:'
       })
 
       const kSim = []

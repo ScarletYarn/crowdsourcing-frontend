@@ -1,12 +1,12 @@
 <template>
   <div class="page-body">
-    <div class="page-title">Commonsense Question Answering</div>
+    <div class="page-title">常识知识问答</div>
     <div class="example-input">
-      <div class="label">Example inputs</div>
+      <div class="label">查询样例</div>
       <el-select
         v-model="example"
         @change="onExampleSelected"
-        placeholder="Select an example query"
+        placeholder="请选择查询样例"
       >
         <el-option
           v-for="item in examples"
@@ -17,14 +17,14 @@
       </el-select>
     </div>
     <div class="query-input">
-      <div class="label">Query</div>
+      <div class="label">查询语句</div>
       <el-input v-model="query"></el-input>
     </div>
     <div class="qa-source">
-      <div class="label">Source</div>
+      <div class="label">来源</div>
       <div class="qa-source-body">
         <el-tabs v-model="activeSource">
-          <el-tab-pane label="KBs" name="first">
+          <el-tab-pane label="知识库" name="first">
             <div class="source-tab">
               <el-checkbox-group v-model="kb">
                 <el-checkbox label="none">None</el-checkbox>
@@ -32,18 +32,18 @@
               </el-checkbox-group>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="Text" name="second">
+          <el-tab-pane label="文本" name="second">
             <div class="source-tab">
               <el-input
                 v-model="textSource"
                 :autosize="{ minRows: 2, maxRows: 8 }"
                 type="textarea"
-                placeholder="Please input"
+                placeholder="请输入文本"
               >
               </el-input>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="Video" name="third">
+          <el-tab-pane label="视频" name="third">
             <div class="source-tab">
               <div class="source-tab">
                 <input
@@ -62,16 +62,16 @@
       </div>
     </div>
     <div class="submit" @click="search()" v-loading.fullscreen.lock="loading">
-      Submit
+      提交
     </div>
     <div class="output" v-if="showOutput">
       <div class="divider"></div>
-      <div class="output-title">Result</div>
+      <div class="output-title">结果</div>
       <div class="output-data">
         <div class="data-row title-row">
-          <div class="data-cell">Source</div>
-          <div class="data-cell">Answers</div>
-          <div class="data-cell">Context</div>
+          <div class="data-cell">来源</div>
+          <div class="data-cell">答案</div>
+          <div class="data-cell">上下文</div>
         </div>
         <div class="data-row" v-for="(item, index) in qaResult" :key="index">
           <div class="data-cell">{{ item.source }}</div>

@@ -139,7 +139,7 @@
             ></i>
           </div>
           <div class="more-link" v-if="headTriples[item].hasMore">
-            <span @click="toMore(entity, item, 'head')">More >></span>
+            <span @click="toMore(entity, item, 'head')">更多条目 >></span>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@
             ></i>
           </div>
           <div class="more-link" v-if="tailTriples[item].hasMore">
-            <span @click="toMore(entity, item, 'tail')">More >></span>
+            <span @click="toMore(entity, item, 'tail')">更多条目 >></span>
           </div>
         </div>
       </div>
