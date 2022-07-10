@@ -406,3 +406,14 @@ export const getEntailment = (premise, hypothesises) => {
     }
   })
 }
+
+export const modifyTriple = (id, subject, relation, object) => {
+  return service.post(`/kb/modifyTriple`, null, {
+    params: {
+      id,
+      subject,
+      relation,
+      object
+    }
+  })
+}

@@ -1,6 +1,11 @@
 <template>
   <div class="page-body">
-    <div class="page-title">常识知识问答</div>
+    <div class="title-container">
+      <div class="page-title">常识知识问答</div>
+      <div class="icon">
+        <i class="el-icon-s-home" @click="$router.push('/kb/home')"></i>
+      </div>
+    </div>
     <div class="example-input">
       <div class="label">查询样例</div>
       <el-select
@@ -46,11 +51,20 @@
           <el-tab-pane label="视频" name="third">
             <div class="source-tab">
               <div class="source-tab">
+                <el-input
+                  style="margin-bottom: 1em"
+                  v-model="videoCaption"
+                  :autosize="{ minRows: 2, maxRows: 8 }"
+                  type="textarea"
+                  placeholder="视频标题"
+                >
+                </el-input>
                 <input
                   type="file"
-                  class="video-upload"
+                  class="video-upload custom-file-input"
                   @change="onVideoUploaded"
                   accept=".mov,.mp4"
+                  placeholder="请上传视频"
                 />
                 <video :src="videoSrc" width="320" height="240" controls>
                   Your browser does not support the video tag.
@@ -107,9 +121,9 @@ export default {
     return {
       examples: [],
       examplesForMask: [
-        'Lions like to eat [MASK].',
-        'Elephants like to eat [MASK].',
-        'Dogs like to eat [MASK].'
+        '狮子喜欢吃[MASK]。',
+        '大象喜欢吃[MASK]。',
+        '狗喜欢吃[MASK]。'
       ],
       examplesForSpan: ['where do lions live ?', '大象喜欢吃什么？'],
       examplesForMaskWord: ['熊猫喜欢吃[MASK]'],
@@ -121,8 +135,10 @@ export default {
       loading: false,
       activeSource: 'first',
       kb: [],
-      textSource: null,
-      videoSrc: null
+      textSource: '',
+      videoSrc: null,
+      videoFile: null,
+      videoCaption: ''
     }
   },
   methods: {
@@ -167,6 +183,23 @@ export default {
         this.noResult = this.qaResult.length === 0
         this.showOutput = true
         this.loading = false
+      } else if (this.activeSource === 'third') {
+        if (!this.videoCaption.trim() || !this.videoFile) {
+          await ElMessage({
+            type: 'warning',
+            message: '请输入文本并上传视频',
+            duration: 1000
+          })
+          return
+        }
+        this.loading = true
+        let res = await getTextQaResult(this.query, this.videoCaption)
+        this.qaResult = res.data.data
+        console.log(this.qaResult)
+        this.noResult = this.qaResult.length === 0
+        this.qaResult[0].source = 'Video'
+        this.showOutput = true
+        this.loading = false
       }
     },
     onExampleSelected(e) {
@@ -174,7 +207,10 @@ export default {
     },
     onVideoUploaded(e) {
       let file = e.target.files[0]
+      this.videoFile = file
       this.videoSrc = URL.createObjectURL(file)
+      console.log(this.videoFile)
+      console.log(this.videoCaption)
     }
   }
 }
@@ -192,10 +228,22 @@ export default {
   text-align: left
   overflow-y: scroll
 
-.page-title
-  font-size: 24px
+.title-container
   margin-bottom: 1em
-  font-weight: 600
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+  .page-title
+    font-size: 24px
+    font-weight: 600
+
+  .icon
+    padding: .5em
+    font-size: 24px
+
+    i
+      cursor: pointer
 
 .label
   margin-bottom: .4em
@@ -255,5 +303,29 @@ export default {
     flex-direction: column
 
     .video-upload
-      margin-bottom: 1em
+      margin-bottom: 0
+
+.custom-file-input::-webkit-file-upload-button
+  visibility: hidden
+
+.custom-file-input::before
+  content: "请选择视频"
+  display: inline-block
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3)
+  border: 1px solid #999
+  border-radius: 3px
+  padding: 5px 8px
+  outline: none
+  white-space: nowrap
+  -webkit-user-select: none
+  cursor: pointer
+  text-shadow: 1px 1px #fff
+  font-weight: 700
+  font-size: 10pt
+
+.custom-file-input:hover::before
+  border-color: black
+
+.custom-file-input:active::before
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9)
 </style>

@@ -1,6 +1,11 @@
 <template>
   <div class="page-body">
-    <div class="page-title">开放信息抽取</div>
+    <div class="title-container">
+      <div class="page-title">开放信息抽取</div>
+      <div class="icon">
+        <i class="el-icon-s-home" @click="$router.push('/kb/home')"></i>
+      </div>
+    </div>
     <div class="example-input">
       <div class="label">查询样例</div>
       <el-select
@@ -77,9 +82,9 @@
               </div>
               <div class="action-section">
                 <div class="discard-button" @click="seq.editDialog = false">
-                  Discard
+                  放弃
                 </div>
-                <div class="save-button">Save</div>
+                <div class="save-button" @click="saveEdit(seq)">保存</div>
               </div>
             </el-dialog>
           </div>
@@ -116,7 +121,8 @@ import {
   infoExtraction,
   similarBm25,
   similarKnn,
-  getEntailment
+  getEntailment,
+  modifyTriple
 } from '@/service'
 import { ElMessage } from 'element-plus'
 
@@ -146,7 +152,7 @@ export default {
       // eslint-disable-next-line
       return (h[0].text + h[1].text + h[2].text).replace(/[\[\]\|]/g, '')
     },
-    wrapSeq(subject, relation, object, source, cnt) {
+    wrapSeq(subject, relation, object, source, cnt, id) {
       const res = [
         {
           type: 'tag',
@@ -169,6 +175,7 @@ export default {
       ]
       if (source) res.source = source
       if (cnt) res.cnt = cnt
+      res.id = id
       return res
     },
     deduplicate(res) {
@@ -238,7 +245,8 @@ export default {
           e.relation,
           e.object,
           'BM25',
-          e.cnt
+          e.cnt,
+          e.id
         )
         bSet.push(wExt)
         res.push(wExt)
@@ -255,7 +263,14 @@ export default {
       }
       const dKnnSim = this.deduplicate(kSim)
       dKnnSim.map(e => {
-        const wExt = this.wrapSeq(e.subject, e.relation, e.object, 'KNN', e.cnt)
+        const wExt = this.wrapSeq(
+          e.subject,
+          e.relation,
+          e.object,
+          'KNN',
+          e.cnt,
+          e.id
+        )
         bSet.push(wExt)
         res.push(wExt)
       })
@@ -286,6 +301,19 @@ export default {
     },
     onExampleSelected(e) {
       this.query = e
+    },
+    async saveEdit(triple) {
+      await modifyTriple(
+        triple.id,
+        triple[0].inEdit,
+        triple[1].inEdit,
+        triple[2].inEdit
+      )
+      triple.map(e => {
+        e.text = e.inEdit
+      })
+
+      triple.editDialog = false
     }
   }
 }
@@ -303,10 +331,22 @@ export default {
   text-align: left
   overflow-y: scroll
 
-.page-title
-  font-size: 24px
+.title-container
   margin-bottom: 1em
-  font-weight: 600
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+  .page-title
+    font-size: 24px
+    font-weight: 600
+
+  .icon
+    padding: .5em
+    font-size: 24px
+
+    i
+      cursor: pointer
 
 .label
   margin-bottom: .4em

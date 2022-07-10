@@ -272,12 +272,14 @@ Mock.mock(/kb\/similar\/bm25(\?.*)?$/, () =>
     {
       subject: '斑马',
       relation: '吃',
-      object: '草'
+      object: '草',
+      id: 'bm251'
     },
     {
       subject: '牛',
       relation: '吃',
-      object: '草'
+      object: '草',
+      id: 'bm252'
     }
   ])
 )
@@ -287,12 +289,14 @@ Mock.mock(/kb\/similar\/knn(\?.*)?$/, () =>
     {
       subject: '斑马',
       relation: '吃',
-      object: '肉'
+      object: '肉',
+      id: '123'
     },
     {
       subject: '牛',
       relation: '吃',
-      object: '木头'
+      object: '木头',
+      id: '124'
     }
   ])
 )
@@ -321,3 +325,5 @@ Mock.mock(/\/kb\/qa\/textQa(\?.*)?$/, () =>
 )
 
 Mock.mock(/\/kb\/entailment(\?.*)?$/, () => succeed([0.234, 0.999]))
+
+Mock.mock(/\/kb\/modifyTriple(\?.*)?$/, () => succeed(true))
