@@ -417,3 +417,15 @@ export const modifyTriple = (id, subject, relation, object) => {
     }
   })
 }
+
+export const getScaleP1 = () => {
+  return service.get(`/kb/scale/p1`)
+}
+
+export const getScaleP2 = () => {
+  return service.get(`/kb/scale/p2`)
+}
+
+export const postRefresh = () => {
+  return service.post(`/kb/scale/refresh`)
+}

@@ -50,13 +50,14 @@
           </el-tab-pane>
           <el-tab-pane label="视频" name="third">
             <div class="source-tab">
+              <div>视频标题</div>
               <div class="source-tab">
                 <el-input
                   style="margin-bottom: 1em"
                   v-model="videoCaption"
                   :autosize="{ minRows: 2, maxRows: 8 }"
                   type="textarea"
-                  placeholder="视频标题"
+                  placeholder="请输入视频标题"
                 >
                 </el-input>
                 <input
@@ -123,7 +124,8 @@ export default {
       examplesForMask: [
         '狮子喜欢吃[MASK]。',
         '大象喜欢吃[MASK]。',
-        '狗喜欢吃[MASK]。'
+        '狗喜欢吃[MASK]。',
+        '牛喜欢吃[MASK]。'
       ],
       examplesForSpan: ['where do lions live ?', '大象喜欢吃什么？'],
       examplesForMaskWord: ['熊猫喜欢吃[MASK]'],

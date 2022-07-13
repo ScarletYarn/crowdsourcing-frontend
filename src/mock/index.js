@@ -327,3 +327,21 @@ Mock.mock(/\/kb\/qa\/textQa(\?.*)?$/, () =>
 Mock.mock(/\/kb\/entailment(\?.*)?$/, () => succeed([0.234, 0.999]))
 
 Mock.mock(/\/kb\/modifyTriple(\?.*)?$/, () => succeed(true))
+
+Mock.mock(/\/kb\/scale\/p1(\?.*)?$/, () =>
+  succeed({
+    tripleCount: 1234,
+    tripleCountZh: 1232
+  })
+)
+
+Mock.mock(/\/kb\/scale\/p2(\?.*)?$/, () =>
+  succeed({
+    entityCount: 112,
+    entityCountZh: 56,
+    isRefreshing: Math.random() > 0.5,
+    lastRefreshDate: '2022-07-10T07:46:18.390+00:00'
+  })
+)
+
+Mock.mock(/\/kb\/scale\/refresh(\?.*)?$/, () => succeed(true))
