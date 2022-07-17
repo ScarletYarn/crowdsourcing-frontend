@@ -410,10 +410,10 @@ export const getEntailment = (premise, hypothesises) => {
 export const modifyTriple = (id, subject, relation, object) => {
   return service.post(`/kb/modifyTriple`, null, {
     params: {
-      id,
-      subject,
-      relation,
-      object
+      id: encodeURIComponent(id),
+      subject: encodeURIComponent(subject),
+      relation: encodeURIComponent(relation),
+      object: encodeURIComponent(object)
     }
   })
 }
@@ -428,4 +428,8 @@ export const getScaleP2 = () => {
 
 export const postRefresh = () => {
   return service.post(`/kb/scale/refresh`)
+}
+
+export const postRefreshFast = () => {
+  return service.post(`/kb/scale/refresh/fast`)
 }

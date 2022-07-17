@@ -153,6 +153,14 @@ export default {
         })
         return
       }
+      if (this.query.split('[MASK]').length !== 2) {
+        await ElMessage({
+          type: 'warning',
+          message: '问题中需含有正好一个[MASK]标记',
+          duration: 1000
+        })
+        return
+      }
       if (this.activeSource === 'first') {
         if (this.kb.length === 0) {
           await ElMessage({

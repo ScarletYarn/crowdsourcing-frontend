@@ -5,6 +5,7 @@
     </div>
     <div class="main-section">
       <el-input
+        ref="search"
         placeholder="输入词条搜索"
         suffix-icon="el-icon-search"
         v-model="search"
@@ -73,13 +74,16 @@
       </div>
       <div class="content text-underline">
         <div @click="$router.push({ name: 'nqa' })">
-          <span class="text-clickable">自然语言问答</span>
+          <span class="text-clickable">常识知识问答</span>
         </div>
-        <div @click="$router.push({ name: 'kb' })">
+        <div @click="guide">
           <span class="text-clickable">常识知识检索</span>
         </div>
         <div @click="$router.push({ name: 'oie' })">
           <span class="text-clickable">开放信息抽取</span>
+        </div>
+        <div @click="$router.push({ name: 'v2c' })">
+          <span class="text-clickable">视频常识抽取</span>
         </div>
       </div>
     </div>
@@ -88,7 +92,7 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { getScaleP1, getScaleP2, postRefresh } from '@/service'
+import { getScaleP1, getScaleP2, postRefreshFast } from '@/service'
 
 export default {
   name: 'Home',
@@ -114,8 +118,8 @@ export default {
     this.tripleCountZh = tripleCountZh
     this.entityCount = entityCount
     this.entityCountZh = entityCountZh
-    this.degree = (entityCount / tripleCount).toFixed(4)
-    this.degreeZh = (entityCountZh / tripleCountZh).toFixed(4)
+    this.degree = (this.tripleCount / entityCount).toFixed(4)
+    this.degreeZh = (this.tripleCountZh / entityCountZh).toFixed(4)
     this.isRefreshing = isRefreshing
     this.lastRefreshDate = new Date(lastRefreshDate).toLocaleString()
   },
@@ -138,7 +142,7 @@ export default {
     },
     async doRefresh() {
       if (this.isRefreshing) return
-      await postRefresh()
+      await postRefreshFast()
       this.isRefreshing = true
       const handle = setInterval(async () => {
         const { entityCount, entityCountZh, isRefreshing, lastRefreshDate } = (
@@ -148,12 +152,17 @@ export default {
           clearInterval(handle)
           this.entityCount = entityCount
           this.entityCountZh = entityCountZh
-          this.degree = (entityCount / this.tripleCount).toFixed(4)
-          this.degreeZh = (entityCountZh / this.tripleCountZh).toFixed(4)
+          this.degree = (this.tripleCount / entityCount).toFixed(4)
+          this.degreeZh = (this.tripleCountZh / entityCountZh).toFixed(4)
           this.isRefreshing = isRefreshing
-          this.lastRefreshDate = lastRefreshDate
+          this.lastRefreshDate = new Date(lastRefreshDate).toLocaleString()
         }
       }, 3000)
+    },
+    guide() {
+      this.$refs['search'].focus()
+      document.body.scrollTop = 0 // For Safari
+      document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
     }
   }
 }

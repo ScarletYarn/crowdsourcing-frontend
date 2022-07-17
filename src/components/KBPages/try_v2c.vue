@@ -1,6 +1,11 @@
 <template>
   <div class="page-body">
-    <div class="page-title">Video To Commonsense</div>
+    <div class="title-container">
+      <div class="page-title">视频常识抽取</div>
+      <div class="icon">
+        <i class="el-icon-s-home" @click="$router.push('/kb/home')"></i>
+      </div>
+    </div>
     <div class="qa-source">
       <div class="source-tab">
         <input
@@ -58,7 +63,7 @@
                   border: 0px solid red;
                   font-size: 15px;
                   top: -100px;
-                  
+
                   float: left;
                   width: 100%;
                   height: 20px;
@@ -95,7 +100,7 @@
             </div>
           </div>
         </div>
-       
+
       </div>
 
       <div class="qa-source-body">
@@ -398,7 +403,7 @@ export default {
       }
       this.loading = true;
       var video_name = this.video_name
-      
+
       var idx_v = video_name.search("video")
       if(idx_v!=0){
         this.video_name = 30001;
@@ -470,11 +475,11 @@ export default {
           this.caption_res =
           'a man wearing shorts is running'
             //'a group of short men dance with a tall attractive woman'
-          
+
           this.loading = false
           this.showOutput0 = true
           // console.log("caption1");
-        
+
           resolve()
         }, 2000)
       })
@@ -499,10 +504,22 @@ export default {
   // text-align: left
   overflow-y: scroll
 
-.page-title
-  font-size: 24px
+.title-container
   margin-bottom: 1em
-  font-weight: 600
+  display: flex
+  align-items: center
+  justify-content: center
+
+  .page-title
+    font-size: 24px
+    font-weight: 600
+
+  .icon
+    padding: .5em
+    font-size: 24px
+
+    i
+      cursor: pointer
 
 .label
   margin-bottom: .4em
@@ -625,7 +642,7 @@ export default {
         //float: right
       .el-button
         //float: right
-        
+
         padding: 0.5em
 
       .caption
@@ -667,7 +684,7 @@ export default {
       user-select: none
       //transition: .2s
       //text-align: left
-     
+
     .submit
       background-color: $primary
       width: 40%

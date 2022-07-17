@@ -71,7 +71,7 @@
           </div>
           <div v-if="!seq.dividerContent && !seq.isExt" class="action-area">
             <div class="edit-button" @click="seq.editDialog = true">编辑</div>
-            <el-dialog v-model="seq.editDialog" title="Edit Extraction">
+            <el-dialog v-model="seq.editDialog" title="编辑常识内容">
               <div v-for="(tag, _index) in seq" :key="_index">
                 <div class="edit-section" v-if="tag.type === 'tag'">
                   <div class="position">{{ tag.label }}</div>

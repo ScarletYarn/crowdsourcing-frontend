@@ -345,3 +345,5 @@ Mock.mock(/\/kb\/scale\/p2(\?.*)?$/, () =>
 )
 
 Mock.mock(/\/kb\/scale\/refresh(\?.*)?$/, () => succeed(true))
+
+Mock.mock(/\/kb\/scale\/refresh\/fast(\?.*)?$/, () => succeed(true))
