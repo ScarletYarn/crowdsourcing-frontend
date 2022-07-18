@@ -18,7 +18,9 @@
         </el-radio-group>
         <div class="triple-edit" v-if="wrongType === 1">
           <div class="cell">
-            <div class="text">{{ activeTriple.subject }}</div>
+            <div class="text" :title="activeTriple.subject">
+              {{ formatSubject(activeTriple.subject) }}
+            </div>
             <div class="type">头实体</div>
           </div>
           <div class="cell">
@@ -192,8 +194,7 @@ import {
   kbSearchImage,
   getAllTripleComment,
   postTripleComment,
-  tripleCommentUpvote,
-  tripleCommentDownvote
+  tripleCommentUpOrDown
 } from '@/service'
 
 export default {
@@ -227,6 +228,10 @@ export default {
     }
   },
   methods: {
+    formatSubject(subject) {
+      if (subject.length < 7) return subject
+      else return subject.substring(0, 5) + '...'
+    },
     async copyText(text) {
       const inputElement = document.getElementById('copy-element')
       inputElement.value = text
@@ -239,15 +244,17 @@ export default {
       })
     },
     async selectProposal(proposal, select) {
-      if (proposal.user) return
+      if (proposal.user && proposal.user !== select) return
+      const isUpvote = select === 1
+      const isCancel = !!proposal.user
+      await tripleCommentUpOrDown(proposal.id, isUpvote, isCancel)
       if (select === 1) {
-        await tripleCommentUpvote(proposal.id)
-        proposal.upvote++
+        proposal.upvote += isCancel ? -1 : 1
       } else {
-        await tripleCommentDownvote(proposal.id)
-        proposal.downvote++
+        proposal.downvote += isCancel ? -1 : 1
       }
       proposal.user = select
+      if (isCancel) proposal.user = null
     },
     parseItems(items, pos) {
       const res = {}

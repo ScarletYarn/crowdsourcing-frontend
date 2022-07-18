@@ -377,18 +377,12 @@ export const postTripleComment = (tripleId, type, data) => {
   })
 }
 
-export const tripleCommentUpvote = id => {
-  return service.post(`/kb/triple/comment/up`, null, {
+export const tripleCommentUpOrDown = (id, isUpvote, isCancel) => {
+  return service.post(`/kb/triple/comment/upOrDown`, null, {
     params: {
-      id
-    }
-  })
-}
-
-export const tripleCommentDownvote = id => {
-  return service.post(`/kb/triple/comment/down`, null, {
-    params: {
-      id
+      id: encodeURIComponent(id),
+      isUpvote,
+      isCancel
     }
   })
 }

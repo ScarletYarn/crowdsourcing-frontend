@@ -34,6 +34,7 @@
           <el-input
             v-model="signUpForm.password"
             type="password"
+            disabled
             placeholder="请输入密码"
             prefix-icon="el-icon-lock"
           ></el-input>
@@ -43,6 +44,7 @@
           <el-input
             v-model="signUpForm.ppassword"
             type="password"
+            disabled
             placeholder="请确认密码"
             prefix-icon="el-icon-lock"
           ></el-input>
@@ -72,8 +74,8 @@ export default {
       signUpForm: {
         username: '',
         mobile: '',
-        password: '',
-        ppassword: ''
+        password: '123123',
+        ppassword: '123123'
       },
       signUpFormRules: {
         username: [

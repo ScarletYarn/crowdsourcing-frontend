@@ -263,9 +263,7 @@ Mock.mock(/kb\/triple\/comment(\?.*)?$/, 'get', () =>
 
 Mock.mock(/kb\/triple\/comment(\?.*)?$/, 'put', () => succeed(true))
 
-Mock.mock(/kb\/triple\/comment\/up(\?.*)?$/, () => succeed(true))
-
-Mock.mock(/kb\/triple\/comment\/down(\?.*)?$/, () => succeed(true))
+Mock.mock(/kb\/triple\/comment\/upOrDown(\?.*)?$/, () => succeed(true))
 
 Mock.mock(/kb\/similar\/bm25(\?.*)?$/, () =>
   succeed([

@@ -73,17 +73,23 @@
         CyBeeKB可以做什么
       </div>
       <div class="content text-underline">
-        <div @click="$router.push({ name: 'nqa' })">
-          <span class="text-clickable">常识知识问答</span>
+        <div>
+          <span @click="$router.push({ name: 'nqa' })" class="text-clickable">
+            常识知识问答
+          </span>
         </div>
-        <div @click="guide">
-          <span class="text-clickable">常识知识检索</span>
+        <div>
+          <span @click="guide" class="text-clickable">常识知识检索</span>
         </div>
-        <div @click="$router.push({ name: 'oie' })">
-          <span class="text-clickable">开放信息抽取</span>
+        <div>
+          <span @click="$router.push({ name: 'oie' })" class="text-clickable">
+            开放信息抽取
+          </span>
         </div>
-        <div @click="$router.push({ name: 'v2c' })">
-          <span class="text-clickable">视频常识抽取</span>
+        <div>
+          <span @click="$router.push({ name: 'v2c' })" class="text-clickable">
+            视频常识抽取
+          </span>
         </div>
       </div>
     </div>
