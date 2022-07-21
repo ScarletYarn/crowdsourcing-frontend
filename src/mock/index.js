@@ -130,13 +130,15 @@ Mock.mock(/kb\/q(\?.*)?$/, () => {
       id: 'test-id-1',
       subject: '狮子',
       relation: '*PartOf',
-      object: 'b高谷镇'
+      object: 'b高谷镇',
+      score: '0.998'
     },
     {
       id: 'test-id-2',
       subject: '狮子',
       relation: '*PartOf',
-      object: 'a凤来乡'
+      object: 'a凤来乡',
+      score: '0.998'
     },
     {
       id: 'test-id-3',
@@ -148,7 +150,8 @@ Mock.mock(/kb\/q(\?.*)?$/, () => {
       id: 'test-id-4',
       subject: '狮子',
       relation: '*PartOf',
-      object: 'e超级狮子玛丽'
+      object: 'e超级狮子玛丽',
+      score: '0.09'
     },
     {
       id: 'test-id-5',
@@ -166,7 +169,8 @@ Mock.mock(/kb\/q(\?.*)?$/, () => {
       id: 'test-id-7',
       subject: '狮子',
       relation: 'RelatedTo',
-      object: '狮子（《聊斋志异》篇目）'
+      object: '狮子（《聊斋志异》篇目）',
+      score: '0.598'
     },
     {
       id: 'test-id-8',
@@ -178,7 +182,8 @@ Mock.mock(/kb\/q(\?.*)?$/, () => {
       id: 'test-id-9',
       subject: '狮子',
       relation: 'RelatedTo',
-      object: '狮子（大型猫科类动物）'
+      object: '狮子（大型猫科类动物）',
+      score: '0.33'
     },
     {
       id: 'test-id-10',

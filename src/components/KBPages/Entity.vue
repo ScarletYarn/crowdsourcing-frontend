@@ -135,10 +135,15 @@
             >
               {{ subItem.value }}
             </div>
-            <i
-              class="el-icon-edit"
-              @click="openEdit(subItem.id, entity, item, subItem.value)"
-            ></i>
+            <div class="d-flex-row flex-items-center">
+              <div class="tail-score" v-if="subItem.score">
+                {{ subItem.score }}
+              </div>
+              <i
+                class="el-icon-edit"
+                @click="openEdit(subItem.id, entity, item, subItem.value)"
+              ></i>
+            </div>
           </div>
           <div class="more-link" v-if="headTriples[item].hasMore">
             <span @click="toMore(entity, item, 'head')">更多条目 >></span>
@@ -172,10 +177,15 @@
             >
               {{ subItem.value }}
             </div>
-            <i
-              class="el-icon-edit"
-              @click="openEdit(subItem.id, subItem.value, item, entity)"
-            ></i>
+            <div class="d-flex-row flex-items-center">
+              <div class="tail-score" v-if="subItem.score">
+                {{ subItem.score }}
+              </div>
+              <i
+                class="el-icon-edit"
+                @click="openEdit(subItem.id, subItem.value, item, entity)"
+              ></i>
+            </div>
           </div>
           <div class="more-link" v-if="tailTriples[item].hasMore">
             <span @click="toMore(entity, item, 'tail')">更多条目 >></span>
@@ -265,6 +275,7 @@ export default {
         if (res[item.relation].length <= 4)
           res[item.relation].push({
             value: item[pos],
+            score: item.score ? parseFloat(item.score).toFixed(2) : null,
             id: item.id
           })
         else res[item.relation].hasMore = true
@@ -428,7 +439,14 @@ export default {
     margin-bottom: .5em
     color: #6F6363
     display: flex
+    justify-content: space-between
     align-items: center
+
+    .tail-score
+      background: #8f8f8f20
+      padding: 1px 6px
+      font-size: 12px
+      border-radius: 4px
 
     *:hover
       cursor: pointer
