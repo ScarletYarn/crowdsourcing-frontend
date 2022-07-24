@@ -33,9 +33,10 @@
           </div>
         </div>
       </div>
-      <div class="action-section" v-if="!submitted">
+      <div class="action-section" v-if="!submitted && !showComplete">
         <div class="discard-action" @click="editDialog = false">放弃</div>
         <div class="submit-action" @click="submit">提交</div>
+        <div class="submit-action" @click="autoComplete">自动预测</div>
       </div>
       <div class="other-edit-section" v-if="submitted">
         <div class="title">其他用户修订：</div>
@@ -69,6 +70,37 @@
               <div class="count">{{ proposal.downvote }}</div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="completion-section" v-if="showComplete">
+        <div class="title">增量推理结果：</div>
+        <div v-if="completionResults.length > 0">
+          <div
+            class="completion-result-cell"
+            :style="`background: ${item.exist ? '#ffa06b' : '#d3f9d3'}`"
+            v-for="(item, index) in completionResults"
+            :key="index"
+          >
+            <div class="item" :title="item.item">
+              {{ formatSubject(item.item) }}
+            </div>
+            <div class="score">
+              {{ item.score.toFixed(2) }}
+            </div>
+            <div
+              class="action text-button"
+              v-if="!item.saved"
+              @click="item.saved = true"
+            >
+              入库 <i class="el-icon-circle-plus-outline" />
+            </div>
+            <div class="action" v-else>
+              已入库 <i class="el-icon-circle-check" />
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          没有推理结果
         </div>
       </div>
     </el-dialog>
@@ -135,13 +167,15 @@
             >
               {{ subItem.value }}
             </div>
-            <div class="d-flex-row flex-items-center">
+            <div class="d-flex-row flex-justify-center">
               <div class="tail-score" v-if="subItem.score">
                 {{ subItem.score }}
               </div>
               <i
                 class="el-icon-edit"
-                @click="openEdit(subItem.id, entity, item, subItem.value)"
+                @click="
+                  openEdit(subItem.id, entity, item, subItem.value, false)
+                "
               ></i>
             </div>
           </div>
@@ -177,13 +211,13 @@
             >
               {{ subItem.value }}
             </div>
-            <div class="d-flex-row flex-items-center">
+            <div class="d-flex-row flex-justify-center">
               <div class="tail-score" v-if="subItem.score">
                 {{ subItem.score }}
               </div>
               <i
                 class="el-icon-edit"
-                @click="openEdit(subItem.id, subItem.value, item, entity)"
+                @click="openEdit(subItem.id, subItem.value, item, entity, true)"
               ></i>
             </div>
           </div>
@@ -204,7 +238,8 @@ import {
   kbSearchImage,
   getAllTripleComment,
   postTripleComment,
-  tripleCommentUpOrDown
+  tripleCommentUpOrDown,
+  getCompletion
 } from '@/service'
 
 export default {
@@ -233,8 +268,11 @@ export default {
       wrongType: 1,
       submitted: false,
       proposals: [],
-      tailEdit: null,
-      activeTriple: null
+      tailEdit: '',
+      activeTriple: null,
+      showComplete: false,
+      completionResults: [],
+      isInEditInv: false
     }
   },
   methods: {
@@ -305,6 +343,14 @@ export default {
         )
     },
     async submit() {
+      if (this.tailEdit.trim().length === 0) {
+        await ElMessage({
+          type: 'warning',
+          message: '请输入尾实体',
+          duration: 1000
+        })
+        return
+      }
       await postTripleComment(
         this.activeTriple.id,
         this.wrongType === 1 ? 'TAIL' : 'WRONG',
@@ -314,7 +360,8 @@ export default {
       this.proposals = allProposals.data.data
       this.submitted = true
     },
-    openEdit(id, subject, relation, object) {
+    openEdit(id, subject, relation, object, isInv) {
+      this.isInEditInv = isInv
       this.editDialog = true
       this.activeTriple = {
         id,
@@ -322,6 +369,17 @@ export default {
         relation,
         object
       }
+    },
+    async autoComplete() {
+      this.showComplete = !this.showComplete
+      this.completionResults = (
+        await getCompletion(
+          this.activeTriple.subject,
+          this.activeTriple.relation,
+          this.isInEditInv
+        )
+      ).data.data
+      console.log(this.isInEditInv)
     }
   },
   computed: {
@@ -332,8 +390,9 @@ export default {
   watch: {
     editDialog() {
       this.submitted = false
+      this.showComplete = false
       this.proposals = []
-      this.tailEdit = null
+      this.tailEdit = ''
     }
   }
 }
@@ -570,4 +629,35 @@ export default {
       @include button
       background: $primary
       padding: .3em 1em
+
+  .completion-section
+    padding-left: 1em
+    margin-top: 1.5em
+
+    .title
+      text-align: left
+      margin-bottom: 1em
+      font-size: 1.2em
+      font-weight: 600
+
+    .completion-result-cell
+      display: flex
+      justify-content: end
+      margin-bottom: 0.5em
+      padding: 0.25em 0
+      border-bottom: solid #8f8f8f20 1px
+
+      .item
+        margin-right: 1em
+
+      .score
+        margin-right: 2em
+        background: #8f8f8f20
+        padding: 1px 6px
+        font-size: 12px
+        border-radius: 4px
+
+      .action
+        width: 5em
+        user-select: none
 </style>

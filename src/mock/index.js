@@ -350,3 +350,27 @@ Mock.mock(/\/kb\/scale\/p2(\?.*)?$/, () =>
 Mock.mock(/\/kb\/scale\/refresh(\?.*)?$/, () => succeed(true))
 
 Mock.mock(/\/kb\/scale\/refresh\/fast(\?.*)?$/, () => succeed(true))
+
+Mock.mock(/\/kb\/completion(\?.*)?$/, () =>
+  succeed([
+    {
+      item: '老虎',
+      score: 0.998
+    },
+    {
+      item: '吃人',
+      score: 0.334,
+      exist: true
+    },
+    {
+      item: '第三项',
+      score: 0.567
+    },
+    {
+      item: '很有道理的话很有道理的话很有道理的话',
+      score: 0.567
+    }
+  ])
+)
+
+Mock.mock(/\/kb\/populate(\?.*)?$/, () => succeed(true))

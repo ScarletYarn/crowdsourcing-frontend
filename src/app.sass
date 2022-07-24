@@ -13,6 +13,14 @@
   &:hover
     opacity: .7
 
+@mixin text-button
+  user-select: none
+  cursor: pointer
+  transition: .5s
+
+  &:hover
+    color: $primary
+
 $primary: #118AB2
 $attention: #F24E6E
 $warn: #E37D6C
@@ -69,5 +77,11 @@ $background: #B193932B
 .d-flex-row
   display: flex
 
-.flex-items-center
+.flex-justify-center
   justify-content: center
+
+.flex-items-center
+  align-items: center
+
+.text-button
+  @include text-button
