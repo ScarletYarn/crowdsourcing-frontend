@@ -151,7 +151,9 @@ import md5 from 'js-md5'
 import { jsonp } from 'vue-jsonp'
 import {
   kbV2C,
-  uploadVideo
+  uploadVideo,
+  infoExtraction,
+  populate
 } from '@/service'
 
 export default {
@@ -429,9 +431,10 @@ export default {
       }
       this.showOutput1 = true
       console.log("related_query:",this.related_query_res);
-      this.MYtrans()
+      await this.MYtrans()
       this.showOutput = true
       this.loading = false
+      this.seq(this.trans_res['caption'],this.trans_res.cms)
       // await new Promise((resolve) => {
       //   setTimeout(() => {
       //     this.related_query_res = [
@@ -488,6 +491,33 @@ export default {
       console.log(tab.index)
       this.selected_tab = this.commonsense_tab[tab.index].tab
       console.log(this.commonsense_tab[tab.index].tab)
+    },
+    async seq(caption,cms){
+      console.log("zh caption:",caption)
+      console.log("zh cms:",cms)
+      const extraction = (await infoExtraction(caption)).data.data
+      console.log("extract:",extraction)
+      const subject = extraction[0].values[1]
+      const event = extraction[0].values[2]
+      console.log("subject:",subject)
+      console.log("event:",event)
+      for( var item of cms){
+        if (item.tab == "INTENTION"){
+          await populate(event,"HasLastSubevent",item.zh)
+        }
+        else if (item.tab == "EFFECT"){
+          await populate(event,"Causes",item.zh)
+        }
+        else if (item.tab == "ATTRIBUTE"){
+          await populate(subject,"HasProperty",item.zh)
+        }
+        else if (item.tab == "NEED"){
+          await populate(event,"HasPrerequisite",item.zh)
+        }
+        else if (item.tab == "REACT"){
+          await populate(subject,"MotivatedByGoal",item.zh)
+        }
+      }
     }
   }
 }
