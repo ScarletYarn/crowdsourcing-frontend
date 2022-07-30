@@ -18,10 +18,17 @@
         </el-radio-group>
         <div class="triple-edit" v-if="wrongType === 1">
           <div class="cell">
-            <div class="text" :title="activeTriple.subject">
-              {{ formatSubject(activeTriple.subject) }}
+            <div
+              class="text"
+              :title="isInEditInv ? activeTriple.object : activeTriple.subject"
+            >
+              {{
+                formatSubject(
+                  isInEditInv ? activeTriple.object : activeTriple.subject
+                )
+              }}
             </div>
-            <div class="type">头实体</div>
+            <div class="type">{{ isInEditInv ? '尾实体' : '头实体' }}</div>
           </div>
           <div class="cell">
             <div class="text">{{ activeTriple.relation }}</div>
@@ -29,7 +36,7 @@
           </div>
           <div class="cell">
             <input class="text" v-model="tailEdit" :disabled="submitted" />
-            <div class="type">尾实体</div>
+            <div class="type">{{ isInEditInv ? '头实体' : '尾实体' }}</div>
           </div>
         </div>
       </div>
@@ -49,7 +56,9 @@
             {{
               proposal.type === 'WRONG'
                 ? '知识表述正确但不是常识'
-                : activeTriple.object + '->' + proposal.data
+                : (isInEditInv ? activeTriple.subject : activeTriple.object) +
+                  '->' +
+                  proposal.data
             }}
           </div>
           <div class="action">
@@ -348,7 +357,7 @@ export default {
         )
     },
     async submit() {
-      if (this.tailEdit.trim().length === 0) {
+      if (this.wrongType === 1 && this.tailEdit.trim().length === 0) {
         await ElMessage({
           type: 'warning',
           message: '请输入尾实体',
