@@ -116,39 +116,60 @@ const routes = [
   {
     path: '/kb/home',
     name: 'kb',
-    component: () => import('../components/KBPages/Home.vue')
+    component: () => import('../components/KBPages/Home.vue'),
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/entity/:entity',
     name: 'entity',
     component: () => import('../components/KBPages/Entity.vue'),
-    props: true
+    props: true,
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/relationship/:entity/:rel/:position',
     name: 'relationship',
     component: () => import('../components/KBPages/Relationship.vue'),
-    props: true
+    props: true,
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/ckqa',
     name: 'qa',
-    component: () => import('../components/KBPages/QA.vue')
+    component: () => import('../components/KBPages/QA.vue'),
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/nqa',
     name: 'nqa',
-    component: () => import('../components/KBPages/NQA.vue')
+    component: () => import('../components/KBPages/NQA.vue'),
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/v2c',
     name: 'v2c',
-    component: () => import('../components/KBPages/try_v2c.vue')
+    component: () => import('../components/KBPages/try_v2c.vue'),
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/kb/oie',
     name: 'oie',
-    component: () => import('../components/KBPages/OIE.vue')
+    component: () => import('../components/KBPages/OIE.vue'),
+    meta: {
+      title: 'CyBeeKB平台'
+    }
   },
   {
     path: '/',

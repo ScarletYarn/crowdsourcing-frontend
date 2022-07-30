@@ -90,7 +90,7 @@
             <div
               class="action text-button"
               v-if="!item.saved"
-              @click="item.saved = true"
+              @click="saveItem(item)"
             >
               入库 <i class="el-icon-circle-plus-outline" />
             </div>
@@ -98,6 +98,9 @@
               已入库 <i class="el-icon-circle-check" />
             </div>
           </div>
+        </div>
+        <div v-else-if="inCompleting">
+          正在推理中...
         </div>
         <div v-else>
           没有推理结果
@@ -239,7 +242,8 @@ import {
   getAllTripleComment,
   postTripleComment,
   tripleCommentUpOrDown,
-  getCompletion
+  getCompletion,
+  populate
 } from '@/service'
 
 export default {
@@ -272,7 +276,8 @@ export default {
       activeTriple: null,
       showComplete: false,
       completionResults: [],
-      isInEditInv: false
+      isInEditInv: false,
+      inCompleting: false
     }
   },
   methods: {
@@ -371,6 +376,8 @@ export default {
       }
     },
     async autoComplete() {
+      this.completionResults = []
+      this.inCompleting = true
       this.showComplete = !this.showComplete
       this.completionResults = (
         await getCompletion(
@@ -379,7 +386,15 @@ export default {
           this.isInEditInv
         )
       ).data.data
-      console.log(this.isInEditInv)
+      this.inCompleting = false
+    },
+    async saveItem(item) {
+      await populate(
+        this.activeTriple.subject,
+        this.activeTriple.relation,
+        item.item
+      )
+      item.saved = true
     }
   },
   computed: {

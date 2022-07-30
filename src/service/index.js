@@ -431,8 +431,8 @@ export const postRefreshFast = () => {
 export const getCompletion = (head, rel, isInv) => {
   return service.get(`/kb/completion`, {
     params: {
-      head: encodeURIComponent(head),
-      rel: encodeURIComponent(rel),
+      head: head,
+      rel: rel,
       isInv: isInv
     }
   })
@@ -441,9 +441,9 @@ export const getCompletion = (head, rel, isInv) => {
 export const populate = (subject, relation, object) => {
   return service.post(`/kb/populate`, null, {
     params: {
-      subject: encodeURIComponent(subject),
-      relation: encodeURIComponent(relation),
-      object: encodeURIComponent(object)
+      subject,
+      relation,
+      object
     }
   })
 }

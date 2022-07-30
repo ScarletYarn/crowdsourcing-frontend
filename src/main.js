@@ -21,6 +21,15 @@ const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title
+  } else {
+    document.title = 'ICA众包平台'
+  }
+  next()
+})
+
 installElementPlus(app)
 app
   .use(store)
