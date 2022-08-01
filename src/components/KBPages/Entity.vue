@@ -98,7 +98,7 @@
             </div>
             <div
               class="action text-button"
-              v-if="!item.saved"
+              v-if="!item.saved && !item.exist"
               @click="saveItem(item)"
             >
               入库 <i class="el-icon-circle-plus-outline" />

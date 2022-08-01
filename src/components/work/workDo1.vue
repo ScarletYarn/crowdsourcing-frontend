@@ -220,7 +220,8 @@ import {
   userAct,
   getJobStatus,
   ratingSheet,
-  ratingSheetComplete
+  ratingSheetComplete,
+  jobComplete
 } from '@/service'
 import { ElMessageBox } from 'element-plus'
 
@@ -392,6 +393,7 @@ export default {
       }
 
       if (this.ruleIndex === this.ruleIdList.length - 1) {
+        await jobComplete(this.$route.params.jobId)
         await this.$router.push({
           name: 'check',
           params: { jobId: this.$route.params.jobId }
@@ -493,15 +495,16 @@ export default {
       this.isLikeReasonShow = true
       this.isNotLikeReasonShow = true
       this.ruleIndex++
-      await this.getCurrentRule()
-      this.nextBusy = false
       if (this.ruleIndex === this.ruleIdList.length) {
+        await jobComplete(this.$route.params.jobId)
         await this.$router.push({
           name: 'check',
           params: { jobId: this.$route.params.jobId }
         })
         return
       }
+      await this.getCurrentRule()
+      this.nextBusy = false
       this.resetAll()
     }
   }

@@ -76,7 +76,11 @@
                 <div class="edit-section" v-if="tag.type === 'tag'">
                   <div class="position">{{ tag.label }}</div>
                   <div class="body">
-                    <input type="text" v-model="tag.inEdit" />
+                    <input
+                      type="text"
+                      :disabled="tag.label === '关系'"
+                      v-model="tag.inEdit"
+                    />
                   </div>
                 </div>
               </div>
@@ -303,6 +307,18 @@ export default {
       this.query = e
     },
     async saveEdit(triple) {
+      if (
+        triple[0].inEdit.length === 0 ||
+        triple[1].inEdit.length === 0 ||
+        triple[2].inEdit.length === 0
+      ) {
+        await ElMessage({
+          type: 'warning',
+          message: '内容不能为空'
+        })
+
+        return
+      }
       await modifyTriple(
         triple.id,
         triple[0].inEdit,
