@@ -162,14 +162,14 @@ export default {
         this.questionScores.advice = '1233'
       }
       if (
-        this.questionScores.q1 === 0 &&
-        this.questionScores.q2 === 0 &&
-        this.questionScores.q3s1 === 0 &&
-        this.questionScores.q3s2 === 0 &&
-        this.questionScores.q4s1 === 0 &&
-        this.questionScores.q4s2 === 0 &&
-        this.questionScores.q5s1 === 0 &&
-        this.questionScores.q5s2 === 0 &&
+        this.questionScores.q1 === 0 ||
+        this.questionScores.q2 === 0 ||
+        this.questionScores.q3s1 === 0 ||
+        this.questionScores.q3s2 === 0 ||
+        this.questionScores.q4s1 === 0 ||
+        this.questionScores.q4s2 === 0 ||
+        this.questionScores.q5s1 === 0 ||
+        this.questionScores.q5s2 === 0 ||
         this.questionScores.advice === ''
       ) {
         await ElMessageBox({

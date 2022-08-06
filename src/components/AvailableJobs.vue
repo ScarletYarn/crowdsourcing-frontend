@@ -29,7 +29,11 @@
           </el-popover>
         </template>
         <template #default="scope">
-          <span>基础工资：{{ scope.row.reward }} ，奖励金额：待算</span>
+          <span
+            >基础工资：{{ scope.row.reward }} ，奖励金额：{{
+              scope.row.bonus
+            }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column prop="publishDate" label="发布日期" width="230">
@@ -54,7 +58,12 @@
 </template>
 
 <script>
-import { getjoball, getJobComplete, getJobStatus } from '@/service'
+import {
+  getjoball,
+  getJobComplete,
+  getJobStatus,
+  getRewardAll
+} from '@/service'
 
 export default {
   name: 'AvailableJobs',
@@ -79,7 +88,7 @@ export default {
     async getJobList() {
       const res = await getjoball()
       this.tableData = res.data.data
-      this.handleFormat()
+      await this.handleFormat()
       await this.handleStatus()
     },
     async handleStatus() {
@@ -92,11 +101,14 @@ export default {
         }
       }
     },
-    handleFormat() {
+    async handleFormat() {
+      const res = await getRewardAll()
+      const rewardData = res.data.data
       for (let i in this.tableData) {
         let data = this.tableData[i]
         data.publishDate = data.publishDate.slice(0, 10)
-        data.reward = '¥' + (parseFloat(data.reward) / 100).toFixed(2)
+        data.reward = '¥' + (parseFloat(rewardData[i].basic) / 100).toFixed(2)
+        data.bonus = '¥' + (parseFloat(rewardData[i].bonus) / 100).toFixed(2)
       }
     },
     async handleClick(row) {
