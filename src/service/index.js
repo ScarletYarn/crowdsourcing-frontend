@@ -428,21 +428,19 @@ export const postRefreshFast = () => {
 }
 
 export const getCompletion = (head, rel, isInv) => {
-  return service.get(`/kb/completion`, {
-    params: {
-      head: head,
-      rel: rel,
-      isInv: isInv
-    }
-  })
+  return service.get(
+    `/kb/completion?head=${encodeURIComponent(head)}&rel=${encodeURIComponent(
+      rel
+    )}&isInv=${isInv}`
+  )
 }
 
 export const populate = (subject, relation, object) => {
-  return service.post(`/kb/populate`, null, {
-    params: {
-      subject,
-      relation,
+  return service.post(
+    `/kb/populate?subject=${encodeURIComponent(
+      subject
+    )}&relation=${encodeURIComponent(relation)}&object=${encodeURIComponent(
       object
-    }
-  })
+    )}`
+  )
 }

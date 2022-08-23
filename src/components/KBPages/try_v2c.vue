@@ -308,7 +308,7 @@ export default {
         //var q = encodeURIComponent(sentence_to_trans);
         this.trans_params.q = sentence_to_trans
         //let url=/baidu
-        jsonp(url, this.trans_params).then((res) => {
+        return jsonp(url, this.trans_params).then((res) => {
           this.en_to_zh = true
           this.show_en = false
           var tab = this.selected_tab
@@ -434,7 +434,7 @@ export default {
       await this.MYtrans()
       this.showOutput = true
       this.loading = false
-      this.seq(this.trans_res['caption'],this.trans_res.cms)
+      this.seq(this.trans_res['caption']['dst'],this.trans_res.cms)
       // await new Promise((resolve) => {
       //   setTimeout(() => {
       //     this.related_query_res = [
