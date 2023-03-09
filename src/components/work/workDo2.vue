@@ -265,6 +265,7 @@ export default {
     async getCurrentRule() {
       const types = ['INS', 'NL', 'KG']
       const order = await getPageOrder(this.ruleIdList[this.ruleIndex])
+      console.log(order)
       this.pageOrder = [
         types.indexOf(order.data.data[0]),
         types.indexOf(order.data.data[1]),

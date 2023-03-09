@@ -90,18 +90,29 @@ Mock.mock(/reward\/rank(\?.*)?$/, () =>
 
 Mock.mock(/questionnaire\/p(\?.*)?$/, () => universalSuccess)
 
-Mock.mock(/ruleData\/byJobId(\?.*)?$/, () => succeed(['12', '23']))
+Mock.mock(/ruleData\/byJobId(\?.*)?$/, () => succeed(new Array(20).fill(1)))
 
 Mock.mock(/ruleData\/q(\?.*)?$/, () =>
   succeed({
     id: '223333rfergefr',
     jobId: 'uvhsihisheviev',
-    content: '国籍(A,v0) & 简称(v0,v1) & 出生地(B,v0) =>配偶(A,B)',
-    graph: '1111111',
-    nl: 'v0和A结婚，B的母亲是v0，那么得出B的父亲是A。',
+    content: '父母(A,v0) & 配偶(v0,B)=> 父母(A,B)',
+    graph: '/img/job2/3.svg',
+    nl: 'A的父母是v0，v0的配偶是B，那么得出A的父母是B。',
     instance:
-      '结婚(梅拉尼娅·特朗普,唐纳德·特朗普) & 母亲(伊万卡·特朗普,梅拉尼娅·特朗普 ) =>父亲(伊万卡·特朗普,唐纳德·特朗普 )',
+      '父母(Albert_II, Rainier_III) &配偶(Rainier_III, Grace_Kelly)=>父母(Albert_II, Grace_Kelly)',
     goldenAnswer: 'ho'
+  })
+)
+
+Mock.mock(/ruleData\/pageSeq(\?.*)?$/, () => succeed(['INS', 'NL', 'KG']))
+
+Mock.mock(/userAction\/add(\?.*)?$/, () => universalSuccess)
+
+Mock.mock(/coinInfo\/get(\?.*)?$/, () =>
+  succeed({
+    currentIndex: 0,
+    count: 40
   })
 )
 

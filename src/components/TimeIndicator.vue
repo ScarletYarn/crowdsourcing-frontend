@@ -1,6 +1,6 @@
 <template>
   <div class="panel">
-    <span>做题时间 | {{ minutes }}:{{ seconds }}</span>
+    <span>Time Elapsed | {{ minutes }}:{{ seconds }}</span>
   </div>
 </template>
 

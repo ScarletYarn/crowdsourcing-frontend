@@ -393,12 +393,11 @@ export const getTextQaResult = (query, text) => {
 }
 
 export const getEntailment = (premise, hypothesises) => {
-  return service.get(`/kb/entailment`, {
-    params: {
-      premise,
-      hypothesises
-    }
-  })
+  return service.get(
+    `/kb/entailment?premise=${encodeURIComponent(
+      premise
+    )}&hypothesises=${hypothesises}`
+  )
 }
 
 export const modifyTriple = (id, subject, relation, object) => {

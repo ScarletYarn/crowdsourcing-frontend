@@ -33,7 +33,7 @@
             <div class="source-tab">
               <el-checkbox-group v-model="kb">
                 <el-checkbox label="none">None</el-checkbox>
-                <el-checkbox label="cskg">CSKG</el-checkbox>
+                <el-checkbox label="cskg">CyBeeKB</el-checkbox>
               </el-checkbox-group>
             </div>
           </el-tab-pane>
